@@ -40,6 +40,7 @@ public abstract class MapActivity extends Activity {
 	private static final String KEY_LONGITUDE = "longitude";
 	private static final String KEY_MAP_FILE = "mapFile";
 	private static final String KEY_ZOOM_LEVEL = "zoomLevel";
+    private static final String KEY_VIEWMODE = "mapViewMode";
 	private static final String PREFERENCES_FILE = "MapActivity";
 
 	private static boolean containsMapViewPosition(SharedPreferences sharedPreferences) {
@@ -67,7 +68,8 @@ public abstract class MapActivity extends Activity {
 	private void restoreMapView(MapView mapView) {
 		SharedPreferences sharedPreferences = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE);
 		if (containsMapViewPosition(sharedPreferences)) {
-			MapViewMode mapViewMode = mapView.getMapViewMode();
+            MapViewMode mapViewMode = MapViewMode.values()[sharedPreferences.getInt(KEY_VIEWMODE, MapView.DEFAULT_MAP_VIEW_MODE.ordinal())];
+            mapView.setMapViewMode(mapViewMode);
 			if (!mapViewMode.requiresInternetConnection() && sharedPreferences.contains(KEY_MAP_FILE)) {
 				// get and set the map file
 				mapView.setMapFile(sharedPreferences.getString(KEY_MAP_FILE, null));
@@ -107,6 +109,7 @@ public abstract class MapActivity extends Activity {
 		if (mapView.hasValidCenter()) {
 			// save the map position and zoom level
 			MapPositionFix mapPositionFix = mapView.getMapPosition().getMapPositionFix();
+            editor.putInt(KEY_VIEWMODE, mapView.getMapViewMode().ordinal());
 			editor.putInt(KEY_LATITUDE, mapPositionFix.getLatitudeE6());
 			editor.putInt(KEY_LONGITUDE, mapPositionFix.getLongitudeE6());
 			editor.putInt(KEY_ZOOM_LEVEL, mapPositionFix.zoomLevel);
