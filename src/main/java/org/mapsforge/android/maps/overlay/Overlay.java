@@ -129,7 +129,7 @@ public abstract class Overlay extends Thread {
 
 	/**
 	 * Draws the overlay on the given canvas.
-	 * 
+	 *
 	 * @param canvas
 	 *            the canvas on which the overlay should be drawn.
 	 */
@@ -264,7 +264,7 @@ public abstract class Overlay extends Thread {
 
 	/**
 	 * This method is called by the MapView once on each new overlay.
-	 * 
+	 *
 	 * @param mapView
 	 *            the calling MapView.
 	 */
@@ -289,6 +289,9 @@ public abstract class Overlay extends Thread {
 		// clear the second bitmap and make the canvas use it
 		this.overlayBitmap2.eraseColor(Color.TRANSPARENT);
 		this.overlayCanvas.setBitmap(this.overlayBitmap2);
+
+		// workaround for http://code.google.com/p/skia/issues/detail?id=387
+        this.overlayCanvas.setMatrix(this.overlayCanvas.getMatrix());
 
 		// save the zoom level and map position before drawing
 		byte zoomLevelBeforeDraw;
