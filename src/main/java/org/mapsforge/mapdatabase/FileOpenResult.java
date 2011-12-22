@@ -53,12 +53,12 @@ public class FileOpenResult {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("FileOpenResult [success=");
-		builder.append(this.success);
-		builder.append(", errorMessage=");
-		builder.append(this.errorMessage);
-		builder.append("]");
-		return builder.toString();
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("FileOpenResult [success=");
+		stringBuilder.append(this.success);
+		stringBuilder.append(", errorMessage=");
+		stringBuilder.append(this.errorMessage);
+		stringBuilder.append("]");
+		return stringBuilder.toString();
 	}
 }

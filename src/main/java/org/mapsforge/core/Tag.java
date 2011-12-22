@@ -14,11 +14,17 @@
  */
 package org.mapsforge.core;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+
 /**
  * A tag represents an immutable key-value pair.
  */
-public class Tag {
+public class Tag implements Serializable {
 	private static final char KEY_VALUE_SEPARATOR = '=';
+
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * The key of this tag.
@@ -30,7 +36,7 @@ public class Tag {
 	 */
 	public final String value;
 
-	private final int hashCodeValue;
+	private transient int hashCodeValue;
 
 	/**
 	 * Constructs a new tag from the given string.
@@ -103,5 +109,10 @@ public class Tag {
 		result = 31 * result + ((this.key == null) ? 0 : this.key.hashCode());
 		result = 31 * result + ((this.value == null) ? 0 : this.value.hashCode());
 		return result;
+	}
+
+	private void readObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
+		objectInputStream.defaultReadObject();
+		this.hashCodeValue = calculateHashCode();
 	}
 }
