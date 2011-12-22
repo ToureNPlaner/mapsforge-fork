@@ -706,9 +706,16 @@ public class MapView extends ViewGroup {
 	void destroy() {
 		this.overlays.clear();
 
-		this.mapWorker.interrupt();
 		this.mapMover.interrupt();
+		this.mapWorker.interrupt();
 		this.zoomAnimator.interrupt();
+
+		try {
+			this.mapWorker.join();
+		} catch (InterruptedException e) {
+			// restore the interrupted status
+			Thread.currentThread().interrupt();
+		}
 
 		this.frameBuffer.destroy();
 		this.touchEventHandler.destroy();

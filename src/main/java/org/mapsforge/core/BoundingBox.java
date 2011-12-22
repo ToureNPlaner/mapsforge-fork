@@ -115,16 +115,16 @@ public class BoundingBox {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("BoundingBox [minLatitudeE6=");
-		builder.append(this.minLatitudeE6);
-		builder.append(", minLongitudeE6=");
-		builder.append(this.minLongitudeE6);
-		builder.append(", maxLatitudeE6=");
-		builder.append(this.maxLatitudeE6);
-		builder.append(", maxLongitudeE6=");
-		builder.append(this.maxLongitudeE6);
-		builder.append("]");
-		return builder.toString();
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("BoundingBox [minLatitudeE6=");
+		stringBuilder.append(this.minLatitudeE6);
+		stringBuilder.append(", minLongitudeE6=");
+		stringBuilder.append(this.minLongitudeE6);
+		stringBuilder.append(", maxLatitudeE6=");
+		stringBuilder.append(this.maxLatitudeE6);
+		stringBuilder.append(", maxLongitudeE6=");
+		stringBuilder.append(this.maxLongitudeE6);
+		stringBuilder.append("]");
+		return stringBuilder.toString();
 	}
 }
