@@ -60,8 +60,8 @@ public interface TileCache {
 	void put(MapGeneratorJob mapGeneratorJob, Bitmap bitmap);
 
 	/**
-	 * Sets the new size of this cache. If this cache already contains more items than the new capacity allows,
-	 * items are discarded based on the cache policy.
+	 * Sets the new size of this cache. If this cache already contains more items than the new capacity allows, items
+	 * are discarded based on the cache policy.
 	 * 
 	 * @param capacity
 	 *            the maximum number of entries in this cache.

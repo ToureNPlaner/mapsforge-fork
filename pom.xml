@@ -8,6 +8,7 @@
 	<version>0.3.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>mapsforge-map</name>
+	<description>A library to render maps without Internet connection.</description>
 	<url>http://mapsforge.org</url>
 
 	<licenses>
@@ -19,20 +20,32 @@
 	</licenses>
 
 	<scm>
+		<url>scm:svn:https://mapsforge.googlecode.com/svn/trunk/</url>
 		<connection>https://mapsforge.googlecode.com/svn/trunk/</connection>
-		<url>https://mapsforge.googlecode.com/svn/trunk/</url>
 	</scm>
-
-	<developers>
-		<developer>
-			<id>Thilo</id>
-			<name>Thilo Mühlberg</name>
-			<email>thilo.muehlberg@gmail.com</email>
-		</developer>
-	</developers>
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2.2</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -52,7 +65,55 @@
 				<configuration>
 					<downloadSources>true</downloadSources>
 					<downloadJavadocs>true</downloadJavadocs>
+					<additionalConfig>
+						<file>
+							<name>.checkstyle</name>
+							<location>../eclipse-config/.checkstyle</location>
+						</file>
+						<file>
+							<name>.checkstyle_rules.xml</name>
+							<location>../eclipse-config/.checkstyle_rules.xml</location>
+						</file>
+						<file>
+							<name>.pmd</name>
+							<location>../eclipse-config/.pmd</location>
+						</file>
+						<file>
+							<name>.pmd_ruleset.xml</name>
+							<location>../eclipse-config/.pmd_ruleset.xml</location>
+						</file>
+						<file>
+							<name>.settings/org.eclipse.core.resources.prefs</name>
+							<location>../eclipse-config/.settings/org.eclipse.core.resources.prefs</location>
+						</file>
+						<file>
+							<name>.settings/org.eclipse.core.runtime.prefs</name>
+							<location>../eclipse-config/.settings/org.eclipse.core.runtime.prefs</location>
+						</file>
+						<file>
+							<name>.settings/org.eclipse.jdt.core.prefs</name>
+							<location>../eclipse-config/.settings/org.eclipse.jdt.core.prefs</location>
+						</file>
+						<file>
+							<name>.settings/org.eclipse.jdt.ui.prefs</name>
+							<location>../eclipse-config/.settings/org.eclipse.jdt.ui.prefs</location>
+						</file>
+					</additionalConfig>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -97,10 +158,23 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.mapsforge</groupId>
+			<artifactId>mapsforge-map-reader</artifactId>
+			<version>0.3.0-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hamcrest</groupId>
+					<artifactId>hamcrest-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 </project>

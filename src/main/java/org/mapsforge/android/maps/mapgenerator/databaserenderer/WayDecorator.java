@@ -35,8 +35,8 @@ final class WayDecorator {
 	 */
 	private static final int SEGMENT_SAFETY_DISTANCE = 30;
 
-	static void renderSymbol(Bitmap symbolBitmap, boolean alignCenter, boolean repeatSymbol,
-			float[][] coordinates, List<SymbolContainer> waySymbols) {
+	static void renderSymbol(Bitmap symbolBitmap, boolean alignCenter, boolean repeatSymbol, float[][] coordinates,
+			List<SymbolContainer> waySymbols) {
 		int skipPixels = SEGMENT_SAFETY_DISTANCE;
 
 		// get the first way point coordinates
@@ -67,8 +67,7 @@ final class WayDecorator {
 				previousY += diffY * segmentSkipPercentage;
 				symbolAngle = (float) Math.toDegrees(Math.atan2(currentY - previousY, currentX - previousX));
 
-				waySymbols
-						.add(new SymbolContainer(symbolBitmap, previousX, previousY, alignCenter, symbolAngle));
+				waySymbols.add(new SymbolContainer(symbolBitmap, previousX, previousY, alignCenter, symbolAngle));
 
 				// check if the symbol should only be rendered once
 				if (!repeatSymbol) {

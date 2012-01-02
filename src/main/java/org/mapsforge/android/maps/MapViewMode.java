@@ -15,8 +15,8 @@
 package org.mapsforge.android.maps;
 
 /**
- * The MapViewMode enumeration lists all possible {@link MapView} operating modes. To check if a MapViewMode
- * requires an Internet connection, use the {@link #requiresInternetConnection()} method.
+ * The MapViewMode enumeration lists all possible {@link MapView} operating modes. To check if a MapViewMode requires an
+ * Internet connection, use the {@link #requiresInternetConnection()} method.
  */
 public enum MapViewMode {
 	/**

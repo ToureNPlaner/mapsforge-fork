@@ -25,13 +25,13 @@ import android.graphics.Matrix;
 import android.graphics.Point;
 
 /**
- * Overlay is the abstract base class for all types of overlays. It handles the lifecycle of the overlay thread
- * and implements those parts of the redrawing process which all overlays have in common.
+ * Overlay is the abstract base class for all types of overlays. It handles the lifecycle of the overlay thread and
+ * implements those parts of the redrawing process which all overlays have in common.
  * <p>
- * To add an overlay to a <code>MapView</code>, create a subclass of this class and add an instance to the list
- * returned by {@link MapView#getOverlays()}. When an overlay gets removed from the list, the corresponding
- * thread is automatically interrupted and all its resources are freed. Re-adding a previously removed overlay
- * to the list will therefore cause an {@link IllegalThreadStateException}.
+ * To add an overlay to a <code>MapView</code>, create a subclass of this class and add an instance to the list returned
+ * by {@link MapView#getOverlays()}. When an overlay gets removed from the list, the corresponding thread is
+ * automatically interrupted and all its resources are freed. Re-adding a previously removed overlay to the list will
+ * therefore cause an {@link IllegalThreadStateException}.
  */
 public abstract class Overlay extends Thread {
 	/**
@@ -170,9 +170,8 @@ public abstract class Overlay extends Thread {
 	}
 
 	/**
-	 * Handles a long press event. A long press event is only triggered if the map was not moved. A return value
-	 * of true indicates that the long press event has been handled by this overlay and stops its propagation to
-	 * other overlays.
+	 * Handles a long press event. A long press event is only triggered if the map was not moved. A return value of true
+	 * indicates that the long press event has been handled by this overlay and stops its propagation to other overlays.
 	 * <p>
 	 * The default implementation of this method does nothing and returns false.
 	 * 
@@ -197,9 +196,9 @@ public abstract class Overlay extends Thread {
 	}
 
 	/**
-	 * Handles a tap event. A tap event is only triggered if the map was not moved and no long press event was
-	 * handled within the same gesture. A return value of true indicates that the tap event has been handled by
-	 * this overlay and stops its propagation to other overlays.
+	 * Handles a tap event. A tap event is only triggered if the map was not moved and no long press event was handled
+	 * within the same gesture. A return value of true indicates that the tap event has been handled by this overlay and
+	 * stops its propagation to other overlays.
 	 * <p>
 	 * The default implementation of this method does nothing and returns false.
 	 * 
@@ -294,8 +293,8 @@ public abstract class Overlay extends Thread {
 		byte zoomLevelBeforeDraw;
 		synchronized (this.internalMapView) {
 			zoomLevelBeforeDraw = this.internalMapView.getMapPosition().getZoomLevel();
-			this.positionBeforeDraw = mapViewProjection.toPoint(this.internalMapView.getMapPosition()
-					.getMapCenter(), this.positionBeforeDraw, zoomLevelBeforeDraw);
+			this.positionBeforeDraw = mapViewProjection.toPoint(this.internalMapView.getMapPosition().getMapCenter(),
+					this.positionBeforeDraw, zoomLevelBeforeDraw);
 		}
 
 		// calculate the top-left point of the visible rectangle
@@ -319,8 +318,8 @@ public abstract class Overlay extends Thread {
 		byte zoomLevelAfterDraw;
 		synchronized (this.internalMapView) {
 			zoomLevelAfterDraw = this.internalMapView.getMapPosition().getZoomLevel();
-			this.positionAfterDraw = mapViewProjection.toPoint(this.internalMapView.getMapPosition()
-					.getMapCenter(), this.positionAfterDraw, zoomLevelBeforeDraw);
+			this.positionAfterDraw = mapViewProjection.toPoint(this.internalMapView.getMapPosition().getMapCenter(),
+					this.positionAfterDraw, zoomLevelBeforeDraw);
 		}
 
 		if (this.internalMapView.isZoomAnimatorRunning()) {
@@ -331,8 +330,8 @@ public abstract class Overlay extends Thread {
 		// adjust the transformation matrix of the overlay
 		synchronized (this.matrix) {
 			this.matrix.reset();
-			this.matrix.postTranslate(this.positionBeforeDraw.x - this.positionAfterDraw.x,
-					this.positionBeforeDraw.y - this.positionAfterDraw.y);
+			this.matrix.postTranslate(this.positionBeforeDraw.x - this.positionAfterDraw.x, this.positionBeforeDraw.y
+					- this.positionAfterDraw.y);
 
 			byte zoomLevelDiff = (byte) (zoomLevelAfterDraw - zoomLevelBeforeDraw);
 			if (zoomLevelDiff > 0) {
@@ -378,8 +377,8 @@ public abstract class Overlay extends Thread {
 			byte drawZoomLevel);
 
 	/**
-	 * Returns the name of the overlay implementation. It will be used as the name for the overlay thread.
-	 * Subclasses should override this method to provide a more specific name.
+	 * Returns the name of the overlay implementation. It will be used as the name for the overlay thread. Subclasses
+	 * should override this method to provide a more specific name.
 	 * 
 	 * @return the name of the overlay implementation.
 	 */

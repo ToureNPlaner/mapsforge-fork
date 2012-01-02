@@ -97,8 +97,8 @@ public final class Line implements RenderInstruction {
 	private final Paint paint;
 	private final float strokeWidth;
 
-	private Line(String src, int stroke, float strokeWidth, float[] strokeDasharray, Cap strokeLinecap,
-			int level) throws IOException {
+	private Line(String src, int stroke, float strokeWidth, float[] strokeDasharray, Cap strokeLinecap, int level)
+			throws IOException {
 		super();
 
 		Shader shader = BitmapUtils.createBitmapShader(src);

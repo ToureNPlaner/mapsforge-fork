@@ -23,9 +23,9 @@ final class TileScheduler {
 	private static final int ZOOM_LEVEL_PENALTY = 5;
 
 	/**
-	 * Calculates the priority for the given tile based on the current position and zoom level of the supplied
-	 * MapView. The smaller the distance from the tile center to the MapView center, the higher its priority. If
-	 * the zoom level of a tile differs from the zoom level of the MapView, its priority decreases.
+	 * Calculates the priority for the given tile based on the current position and zoom level of the supplied MapView.
+	 * The smaller the distance from the tile center to the MapView center, the higher its priority. If the zoom level
+	 * of a tile differs from the zoom level of the MapView, its priority decreases.
 	 * 
 	 * @param tile
 	 *            the tile whose priority should be calculated.

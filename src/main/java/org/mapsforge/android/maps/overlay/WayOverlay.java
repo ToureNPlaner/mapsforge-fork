@@ -22,12 +22,12 @@ import android.graphics.Path;
 import android.graphics.Point;
 
 /**
- * WayOverlay is an abstract base class to display {@link OverlayWay OverlayWays}. The class defines some
- * methods to access the backing data structure of deriving subclasses.
+ * WayOverlay is an abstract base class to display {@link OverlayWay OverlayWays}. The class defines some methods to
+ * access the backing data structure of deriving subclasses.
  * <p>
- * The overlay may be used to show additional ways such as calculated routes. Closed polygons, for example
- * buildings or areas, are also supported. A way node sequence is considered as a closed polygon if the first
- * and the last way node are equal.
+ * The overlay may be used to show additional ways such as calculated routes. Closed polygons, for example buildings or
+ * areas, are also supported. A way node sequence is considered as a closed polygon if the first and the last way node
+ * are equal.
  * 
  * @param <Way>
  *            the type of ways handled by this overlay.
@@ -40,8 +40,8 @@ public abstract class WayOverlay<Way extends OverlayWay> extends Overlay {
 	private final Path path;
 
 	/**
-	 * Constructs a new WayOverlay with the given default paints. The drawing quality can be improved by
-	 * enabling {@link Paint#setAntiAlias(boolean) anti-aliasing}.
+	 * Constructs a new WayOverlay with the given default paints. The drawing quality can be improved by enabling
+	 * {@link Paint#setAntiAlias(boolean) anti-aliasing}.
 	 * 
 	 * @param defaultPaintFill
 	 *            the default paint which will be used to fill the ways (may be null).
@@ -103,8 +103,7 @@ public abstract class WayOverlay<Way extends OverlayWay> extends Overlay {
 	protected abstract Way createWay(int index);
 
 	@Override
-	protected void drawOverlayBitmap(Canvas canvas, Point drawPosition, Projection projection,
-			byte drawZoomLevel) {
+	protected void drawOverlayBitmap(Canvas canvas, Point drawPosition, Projection projection, byte drawZoomLevel) {
 		int numberOfWays = size();
 		for (int wayIndex = 0; wayIndex < numberOfWays; ++wayIndex) {
 			if (isInterrupted() || sizeHasChanged()) {

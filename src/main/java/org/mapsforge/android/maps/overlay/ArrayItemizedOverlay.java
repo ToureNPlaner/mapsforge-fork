@@ -21,9 +21,9 @@ import java.util.List;
 import android.graphics.drawable.Drawable;
 
 /**
- * ArrayItemizedOverlay is a thread-safe implementation of the {@link ItemizedOverlay} class using an
- * {@link ArrayList} as internal data structure. A default marker for all {@link OverlayItem OverlayItems}
- * without an individual marker can be defined via the constructor.
+ * ArrayItemizedOverlay is a thread-safe implementation of the {@link ItemizedOverlay} class using an {@link ArrayList}
+ * as internal data structure. A default marker for all {@link OverlayItem OverlayItems} without an individual marker
+ * can be defined via the constructor.
  */
 public class ArrayItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	private static final int INITIAL_CAPACITY = 8;
@@ -35,8 +35,8 @@ public class ArrayItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	 * Constructs a new ArrayItemizedOverlay.
 	 * 
 	 * @param defaultMarker
-	 *            the default marker (may be null). This marker is aligned to the center of its bottom line to
-	 *            allow for a conical symbol such as a pin or a needle.
+	 *            the default marker (may be null). This marker is aligned to the center of its bottom line to allow for
+	 *            a conical symbol such as a pin or a needle.
 	 */
 	public ArrayItemizedOverlay(Drawable defaultMarker) {
 		this(defaultMarker, true);
@@ -48,12 +48,11 @@ public class ArrayItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	 * @param defaultMarker
 	 *            the default marker (may be null).
 	 * @param alignMarker
-	 *            whether the default marker should be aligned or not. If true, the marker is aligned to the
-	 *            center of its bottom line to allow for a conical symbol such as a pin or a needle.
+	 *            whether the default marker should be aligned or not. If true, the marker is aligned to the center of
+	 *            its bottom line to allow for a conical symbol such as a pin or a needle.
 	 */
 	public ArrayItemizedOverlay(Drawable defaultMarker, boolean alignMarker) {
-		super(defaultMarker != null && alignMarker ? ItemizedOverlay.boundCenterBottom(defaultMarker)
-				: defaultMarker);
+		super(defaultMarker != null && alignMarker ? ItemizedOverlay.boundCenterBottom(defaultMarker) : defaultMarker);
 		this.overlayItems = new ArrayList<OverlayItem>(INITIAL_CAPACITY);
 	}
 

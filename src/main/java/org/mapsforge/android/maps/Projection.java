@@ -19,9 +19,8 @@ import org.mapsforge.core.GeoPoint;
 import android.graphics.Point;
 
 /**
- * A Projection translates between the pixel coordinate system on the screen and geographical points on the
- * earth. To retrieve the currently used Projection for a given MapView, call the
- * {@link MapView#getProjection()} method.
+ * A Projection translates between the pixel coordinate system on the screen and geographical points on the earth. To
+ * retrieve the currently used Projection for a given MapView, call the {@link MapView#getProjection()} method.
  */
 public interface Projection {
 	/**
@@ -51,28 +50,28 @@ public interface Projection {
 	int getLongitudeSpan();
 
 	/**
-	 * Converts the given distance in meters at the given zoom level to the corresponding number of horizontal
-	 * pixels. The calculation is carried out at the current latitude coordinate.
+	 * Converts the given distance in meters at the given zoom level to the corresponding number of horizontal pixels.
+	 * The calculation is carried out at the current latitude coordinate.
 	 * 
 	 * @param meters
 	 *            the distance in meters.
-	 * @param zoom
+	 * @param zoomLevel
 	 *            the zoom level at which the distance should be calculated.
 	 * @return the number of pixels at the current map position and the given zoom level.
 	 */
-	float metersToPixels(float meters, byte zoom);
+	float metersToPixels(float meters, byte zoomLevel);
 
 	/**
-	 * Translates the given {@link GeoPoint} to relative pixel coordinates on the screen. If the corresponding
-	 * MapView has no valid dimensions (width and height > 0), null is returned.
+	 * Translates the given {@link GeoPoint} to relative pixel coordinates on the screen. If the corresponding MapView
+	 * has no valid dimensions (width and height > 0), null is returned.
 	 * 
 	 * @param in
 	 *            the geographical point to convert.
 	 * @param out
-	 *            an already existing object to use for the output. If this parameter is null, a new Point
-	 *            object will be created and returned.
-	 * @return a Point which is relative to the top-left of the MapView or null, if the corresponding MapView
-	 *         has no valid dimensions.
+	 *            an already existing object to use for the output. If this parameter is null, a new Point object will
+	 *            be created and returned.
+	 * @return a Point which is relative to the top-left of the MapView or null, if the corresponding MapView has no
+	 *         valid dimensions.
 	 */
 	Point toPixels(GeoPoint in, Point out);
 
@@ -82,11 +81,11 @@ public interface Projection {
 	 * @param in
 	 *            the geographical point to convert.
 	 * @param out
-	 *            an already existing object to use for the output. If this parameter is null, a new Point
-	 *            object will be created and returned.
-	 * @param zoom
+	 *            an already existing object to use for the output. If this parameter is null, a new Point object will
+	 *            be created and returned.
+	 * @param zoomLevel
 	 *            the zoom level at which the point should be converted.
 	 * @return a Point which is relative to the top-left of the world map.
 	 */
-	Point toPoint(GeoPoint in, Point out, byte zoom);
+	Point toPoint(GeoPoint in, Point out, byte zoomLevel);
 }

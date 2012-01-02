@@ -35,8 +35,8 @@ abstract class Rule {
 	private static final String STRING_WILDCARD = "*";
 	private static final String UNKNOWN_ENUM_VALUE = "unknown enum value: ";
 
-	private static Rule createRule(Stack<Rule> ruleStack, Element element, String keys, String values,
-			Closed closed, byte zoomMin, byte zoomMax) {
+	private static Rule createRule(Stack<Rule> ruleStack, Element element, String keys, String values, Closed closed,
+			byte zoomMin, byte zoomMax) {
 		ElementMatcher elementMatcher = getElementMatcher(element);
 		ClosedMatcher closedMatcher = getClosedMatcher(closed);
 		List<String> keyList = new ArrayList<String>(Arrays.asList(SPLIT_PATTERN.split(keys)));

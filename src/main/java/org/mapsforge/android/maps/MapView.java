@@ -39,8 +39,8 @@ import org.mapsforge.android.maps.rendertheme.InternalRenderTheme;
 import org.mapsforge.core.GeoPoint;
 import org.mapsforge.core.MercatorProjection;
 import org.mapsforge.core.Tile;
-import org.mapsforge.mapdatabase.FileOpenResult;
-import org.mapsforge.mapdatabase.MapDatabase;
+import org.mapsforge.map.reader.FileOpenResult;
+import org.mapsforge.map.reader.MapDatabase;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -53,21 +53,21 @@ import android.view.MotionEvent;
 import android.view.ViewGroup;
 
 /**
- * A MapView shows a map on the display of the device. It handles all user input and touch gestures to move and
- * zoom the map. This MapView also includes a scale bar and zoom controls. The {@link #getController()} method
- * returns a {@link MapController} to programmatically modify the position and zoom level of the map.
+ * A MapView shows a map on the display of the device. It handles all user input and touch gestures to move and zoom the
+ * map. This MapView also includes a scale bar and zoom controls. The {@link #getController()} method returns a
+ * {@link MapController} to programmatically modify the position and zoom level of the map.
  * <p>
  * This implementation supports offline map rendering as well as downloading map images (tiles) over an Internet
- * connection. All possible operation modes are listed in the {@link MapViewMode} enumeration. The operation
- * mode of a MapView can be set in the constructor and changed at runtime with the
- * {@link #setMapViewMode(MapViewMode)} method. Some MapView parameters depend on the selected operation mode.
+ * connection. All possible operation modes are listed in the {@link MapViewMode} enumeration. The operation mode of a
+ * MapView can be set in the constructor and changed at runtime with the {@link #setMapViewMode(MapViewMode)} method.
+ * Some MapView parameters depend on the selected operation mode.
  * <p>
- * In offline rendering mode a special database file is required which contains the map data. Map files can be
- * stored in any folder. The current map file is set by calling {@link #setMapFile(String)}. To retrieve the
- * current {@link MapDatabase}, use the {@link #getMapDatabase()} method.
+ * In offline rendering mode a special database file is required which contains the map data. Map files can be stored in
+ * any folder. The current map file is set by calling {@link #setMapFile(String)}. To retrieve the current
+ * {@link MapDatabase}, use the {@link #getMapDatabase()} method.
  * <p>
- * {@link Overlay Overlays} can be used to display geographical data such as points and ways. To draw an overlay
- * on top of the map, add it to the list returned by {@link #getOverlays()}.
+ * {@link Overlay Overlays} can be used to display geographical data such as points and ways. To draw an overlay on top
+ * of the map, add it to the list returned by {@link #getOverlays()}.
  */
 public class MapView extends ViewGroup {
 
@@ -128,8 +128,8 @@ public class MapView extends ViewGroup {
 	}
 
 	/**
-	 * Constructs a new MapView. The {@link MapViewMode} can be defined via a {@code mode} attribute in the XML
-	 * layout file. If no mode is specified, the default mode is used.
+	 * Constructs a new MapView. The {@link MapViewMode} can be defined via a {@code mode} attribute in the XML layout
+	 * file. If no mode is specified, the default mode is used.
 	 * 
 	 * @param context
 	 *            the enclosing MapActivity instance.
@@ -307,8 +307,8 @@ public class MapView extends ViewGroup {
 	}
 
 	/**
-	 * Returns a thread-safe list of overlays for this MapView. It is necessary to manually synchronize on this
-	 * list when iterating over it.
+	 * Returns a thread-safe list of overlays for this MapView. It is necessary to manually synchronize on this list
+	 * when iterating over it.
 	 * 
 	 * @return the overlay list.
 	 */
@@ -378,10 +378,8 @@ public class MapView extends ViewGroup {
 		}
 
 		MapPositionFix mapPositionFix = this.mapPosition.getMapPositionFix();
-		double pixelLeft = MercatorProjection.longitudeToPixelX(mapPositionFix.longitude,
-				mapPositionFix.zoomLevel);
-		double pixelTop = MercatorProjection
-				.latitudeToPixelY(mapPositionFix.latitude, mapPositionFix.zoomLevel);
+		double pixelLeft = MercatorProjection.longitudeToPixelX(mapPositionFix.longitude, mapPositionFix.zoomLevel);
+		double pixelTop = MercatorProjection.latitudeToPixelY(mapPositionFix.latitude, mapPositionFix.zoomLevel);
 		pixelLeft -= getWidth() >> 1;
 		pixelTop -= getHeight() >> 1;
 
@@ -393,8 +391,8 @@ public class MapView extends ViewGroup {
 		for (long tileY = tileTop; tileY <= tileBottom; ++tileY) {
 			for (long tileX = tileLeft; tileX <= tileRight; ++tileX) {
 				Tile tile = new Tile(tileX, tileY, mapPositionFix.zoomLevel);
-				MapGeneratorJob mapGeneratorJob = new MapGeneratorJob(tile, this.mapViewMode,
-						this.jobParameters, this.debugSettings);
+				MapGeneratorJob mapGeneratorJob = new MapGeneratorJob(tile, this.mapViewMode, this.jobParameters,
+						this.debugSettings);
 
 				if (this.inMemoryTileCache.containsKey(mapGeneratorJob)) {
 					Bitmap bitmap = this.inMemoryTileCache.get(mapGeneratorJob);
@@ -576,8 +574,8 @@ public class MapView extends ViewGroup {
 	}
 
 	/**
-	 * Takes a screenshot of the currently visible map and saves it as a compressed image. Zoom buttons, scale
-	 * bar, FPS counter, overlays, menus and the title bar are not included in the screenshot.
+	 * Takes a screenshot of the currently visible map and saves it as a compressed image. Zoom buttons, scale bar, FPS
+	 * counter, overlays, menus and the title bar are not included in the screenshot.
 	 * 
 	 * @param fileName
 	 *            the name of the image file. If the file exists, it will be overwritten.
@@ -589,8 +587,7 @@ public class MapView extends ViewGroup {
 	 * @throws IOException
 	 *             if an error occurs while writing the image file.
 	 */
-	public boolean takeScreenshot(CompressFormat compressFormat, int quality, String fileName)
-			throws IOException {
+	public boolean takeScreenshot(CompressFormat compressFormat, int quality, String fileName) throws IOException {
 		FileOutputStream outputStream = new FileOutputStream(fileName);
 		boolean success = this.frameBuffer.compress(compressFormat, quality, outputStream);
 		outputStream.close();
@@ -676,8 +673,7 @@ public class MapView extends ViewGroup {
 				MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightMeasureSpec), MeasureSpec.AT_MOST));
 
 		// make sure that MapView is big enough to display the zoom controls
-		setMeasuredDimension(
-				Math.max(MeasureSpec.getSize(widthMeasureSpec), this.mapZoomControls.getMeasuredWidth()),
+		setMeasuredDimension(Math.max(MeasureSpec.getSize(widthMeasureSpec), this.mapZoomControls.getMeasuredWidth()),
 				Math.max(MeasureSpec.getSize(heightMeasureSpec), this.mapZoomControls.getMeasuredHeight()));
 	}
 
@@ -749,8 +745,7 @@ public class MapView extends ViewGroup {
 	}
 
 	byte limitZoomLevel(byte zoom) {
-		return (byte) Math.max(Math.min(zoom, getMaximumPossibleZoomLevel()),
-				this.mapZoomControls.getZoomLevelMin());
+		return (byte) Math.max(Math.min(zoom, getMaximumPossibleZoomLevel()), this.mapZoomControls.getZoomLevelMin());
 	}
 
 	void onPause() {
@@ -784,9 +779,9 @@ public class MapView extends ViewGroup {
 			if (hasValidCenter()) {
 				// calculate the distance between previous and current position
 				MapPositionFix mapPositionFix = this.mapPosition.getMapPositionFix();
-				float matrixTranslateX = (float) (MercatorProjection.longitudeToPixelX(
-						mapPositionFix.longitude, mapPositionFix.zoomLevel) - MercatorProjection
-						.longitudeToPixelX(geoPoint.getLongitude(), mapPositionFix.zoomLevel));
+				float matrixTranslateX = (float) (MercatorProjection.longitudeToPixelX(mapPositionFix.longitude,
+						mapPositionFix.zoomLevel) - MercatorProjection.longitudeToPixelX(geoPoint.getLongitude(),
+						mapPositionFix.zoomLevel));
 				float matrixTranslateY = (float) (MercatorProjection.latitudeToPixelY(mapPositionFix.latitude,
 						mapPositionFix.zoomLevel) - MercatorProjection.latitudeToPixelY(geoPoint.getLatitude(),
 						mapPositionFix.zoomLevel));
