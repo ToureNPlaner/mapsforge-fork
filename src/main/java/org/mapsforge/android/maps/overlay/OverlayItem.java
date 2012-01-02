@@ -20,8 +20,8 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 
 /**
- * OverlayItem holds all parameters of a single element on an {@link ItemizedOverlay}, such as position, marker,
- * title and textual description.
+ * OverlayItem holds all parameters of a single element on an {@link ItemizedOverlay}, such as position, marker, title
+ * and textual description.
  */
 public class OverlayItem {
 	/**
@@ -79,8 +79,8 @@ public class OverlayItem {
 	}
 
 	/**
-	 * Constructs a new OverlayItem which will be drawn with the given marker. If the marker is null, the
-	 * default marker of the overlay will be drawn instead.
+	 * Constructs a new OverlayItem which will be drawn with the given marker. If the marker is null, the default marker
+	 * of the overlay will be drawn instead.
 	 * <p>
 	 * The bounds of the marker must already have been set properly, for example by calling
 	 * {@link ItemizedOverlay#boundCenterBottom(Drawable)}.
@@ -131,8 +131,8 @@ public class OverlayItem {
 	}
 
 	/**
-	 * Sets the marker that is drawn for this item. If the marker is null, the default marker of the overlay
-	 * will be drawn instead.
+	 * Sets the marker that is drawn for this item. If the marker is null, the default marker of the overlay will be
+	 * drawn instead.
 	 * <p>
 	 * The bounds of the marker must already have been set properly, for example by calling
 	 * {@link ItemizedOverlay#boundCenterBottom(Drawable)}.

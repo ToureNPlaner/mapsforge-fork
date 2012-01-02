@@ -32,8 +32,7 @@ final class RuleOptimizer {
 		return attributeMatcher;
 	}
 
-	private static AttributeMatcher optimizeValueMatcher(AttributeMatcher attributeMatcher,
-			Stack<Rule> ruleStack) {
+	private static AttributeMatcher optimizeValueMatcher(AttributeMatcher attributeMatcher, Stack<Rule> ruleStack) {
 		for (int i = 0, n = ruleStack.size(); i < n; ++i) {
 			if (ruleStack.get(i) instanceof PositiveRule) {
 				PositiveRule positiveRule = (PositiveRule) ruleStack.get(i);

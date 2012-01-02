@@ -20,9 +20,9 @@ import android.view.KeyEvent;
 import android.view.View;
 
 /**
- * A MapController is used to programmatically modify the position and zoom level of a MapView. Each
- * MapController is assigned to a single MapView instance. To retrieve a MapController for a given MapView, use
- * the {@link MapView#getController()} method.
+ * A MapController is used to programmatically modify the position and zoom level of a MapView. Each MapController is
+ * assigned to a single MapView instance. To retrieve a MapController for a given MapView, use the
+ * {@link MapView#getController()} method.
  */
 public final class MapController implements View.OnKeyListener {
 	private final MapView mapView;

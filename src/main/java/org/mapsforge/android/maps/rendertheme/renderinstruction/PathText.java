@@ -72,7 +72,8 @@ public final class PathText implements RenderInstruction {
 		}
 
 		validate(elementName, textKey, fontSize, strokeWidth);
-		return new PathText(textKey, fontFamily, fontStyle, fontSize, fill, stroke, strokeWidth);
+		Typeface typeface = Typeface.create(fontFamily.toTypeface(), fontStyle.toInt());
+		return new PathText(textKey, typeface, fontSize, fill, stroke, strokeWidth);
 	}
 
 	private static void validate(String elementName, TextKey textKey, float fontSize, float strokeWidth) {
@@ -90,12 +91,10 @@ public final class PathText implements RenderInstruction {
 	private final Paint stroke;
 	private final TextKey textKey;
 
-	private PathText(TextKey textKey, FontFamily fontFamily, FontStyle fontStyle, float fontSize, int fill,
-			int stroke, float strokeWidth) {
+	private PathText(TextKey textKey, Typeface typeface, float fontSize, int fill, int stroke, float strokeWidth) {
 		super();
 
 		this.textKey = textKey;
-		Typeface typeface = Typeface.create(fontFamily.toTypeface(), fontStyle.toInt());
 
 		this.paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		this.paint.setTextAlign(Align.CENTER);

@@ -21,9 +21,9 @@ import java.util.List;
 import android.graphics.Paint;
 
 /**
- * ArrayCircleOverlay is a thread-safe implementation of the {@link CircleOverlay} class using an
- * {@link ArrayList} as internal data structure. Default paints for all {@link OverlayCircle OverlayCircles}
- * without individual paints can be defined via the constructor.
+ * ArrayCircleOverlay is a thread-safe implementation of the {@link CircleOverlay} class using an {@link ArrayList} as
+ * internal data structure. Default paints for all {@link OverlayCircle OverlayCircles} without individual paints can be
+ * defined via the constructor.
  */
 public class ArrayCircleOverlay extends CircleOverlay<OverlayCircle> {
 	private static final int INITIAL_CAPACITY = 8;

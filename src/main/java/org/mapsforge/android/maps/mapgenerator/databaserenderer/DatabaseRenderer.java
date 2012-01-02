@@ -32,9 +32,9 @@ import org.mapsforge.core.GeoPoint;
 import org.mapsforge.core.MercatorProjection;
 import org.mapsforge.core.Tag;
 import org.mapsforge.core.Tile;
-import org.mapsforge.mapdatabase.MapDatabase;
-import org.mapsforge.mapdatabase.MapDatabaseCallback;
-import org.mapsforge.mapdatabase.MapFileInfo;
+import org.mapsforge.map.reader.MapDatabase;
+import org.mapsforge.map.reader.MapDatabaseCallback;
+import org.mapsforge.map.reader.MapFileInfo;
 import org.xml.sax.SAXException;
 
 import android.graphics.Bitmap;
@@ -54,8 +54,8 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 	private static final byte STROKE_MIN_ZOOM_LEVEL = 12;
 	private static final Tag TAG_NATURAL_WATER = new Tag("natural", "water");
 
-	private static final float[][] WATER_TILE_COORDINATES = new float[][] { { 0, 0, Tile.TILE_SIZE, 0,
-			Tile.TILE_SIZE, Tile.TILE_SIZE, 0, Tile.TILE_SIZE, 0, 0 } };
+	private static final float[][] WATER_TILE_COORDINATES = new float[][] { { 0, 0, Tile.TILE_SIZE, 0, Tile.TILE_SIZE,
+			Tile.TILE_SIZE, 0, Tile.TILE_SIZE, 0, 0 } };
 
 	private static final byte ZOOM_DEFAULT = 5;
 	private static final byte ZOOM_MAX = 22;
@@ -175,8 +175,7 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 
 		this.mapDatabase.executeQuery(this.currentTile, this);
 
-		this.nodes = this.labelPlacement.placeLabels(this.nodes, this.pointSymbols, this.areaLabels,
-				this.currentTile);
+		this.nodes = this.labelPlacement.placeLabels(this.nodes, this.pointSymbols, this.areaLabels, this.currentTile);
 
 		this.canvasRasterer.setCanvasBitmap(bitmap);
 		this.canvasRasterer.fill(this.renderTheme.getMapBackground());
@@ -232,8 +231,7 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 	@Override
 	public void renderAreaCaption(String caption, float verticalOffset, Paint paint, Paint stroke) {
 		float[] centerPosition = GeometryUtils.calculateCenterOfBoundingBox(this.coordinates[0]);
-		this.areaLabels
-				.add(new PointTextContainer(caption, centerPosition[0], centerPosition[1], paint, stroke));
+		this.areaLabels.add(new PointTextContainer(caption, centerPosition[0], centerPosition[1], paint, stroke));
 	}
 
 	@Override
@@ -348,8 +346,8 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 	 * @return the Y coordinate on the current tile.
 	 */
 	private float scaleLatitude(float latitude) {
-		return (float) (MercatorProjection.latitudeToPixelY(latitude / (double) 1000000,
-				this.currentTile.zoomLevel) - this.currentTile.getPixelY());
+		return (float) (MercatorProjection.latitudeToPixelY(latitude / (double) 1000000, this.currentTile.zoomLevel) - this.currentTile
+				.getPixelY());
 	}
 
 	/**
@@ -360,8 +358,8 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 	 * @return the X coordinate on the current tile.
 	 */
 	private float scaleLongitude(float longitude) {
-		return (float) (MercatorProjection.longitudeToPixelX(longitude / (double) 1000000,
-				this.currentTile.zoomLevel) - this.currentTile.getPixelX());
+		return (float) (MercatorProjection.longitudeToPixelX(longitude / (double) 1000000, this.currentTile.zoomLevel) - this.currentTile
+				.getPixelX());
 	}
 
 	/**

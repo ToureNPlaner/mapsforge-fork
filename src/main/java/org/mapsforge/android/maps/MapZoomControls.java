@@ -162,8 +162,8 @@ public class MapZoomControls {
 
 	/**
 	 * Sets the gravity for the placing of the zoom controls. Supported values are {@link Gravity#TOP},
-	 * {@link Gravity#CENTER_VERTICAL}, {@link Gravity#BOTTOM}, {@link Gravity#LEFT},
-	 * {@link Gravity#CENTER_HORIZONTAL} and {@link Gravity#RIGHT}.
+	 * {@link Gravity#CENTER_VERTICAL}, {@link Gravity#BOTTOM}, {@link Gravity#LEFT}, {@link Gravity#CENTER_HORIZONTAL}
+	 * and {@link Gravity#RIGHT}.
 	 * 
 	 * @param zoomControlsGravity
 	 *            a combination of {@link Gravity} constants describing the desired placement.
@@ -178,9 +178,9 @@ public class MapZoomControls {
 	/**
 	 * Sets the maximum zoom level of the map.
 	 * <p>
-	 * The maximum possible zoom level of the MapView depends also on the current {@link MapViewMode}. For
-	 * example, downloading map tiles may only be possible up to a certain zoom level. Setting a higher maximum
-	 * zoom level has no effect in this case.
+	 * The maximum possible zoom level of the MapView depends also on the current {@link MapViewMode}. For example,
+	 * downloading map tiles may only be possible up to a certain zoom level. Setting a higher maximum zoom level has no
+	 * effect in this case.
 	 * 
 	 * @param zoomLevelMax
 	 *            the maximum zoom level.

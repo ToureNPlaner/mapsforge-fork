@@ -21,8 +21,8 @@ import org.mapsforge.core.Tile;
 import android.graphics.Bitmap;
 
 /**
- * A MapWorker uses a {@link MapGenerator} to generate map tiles. It runs in a separate thread to avoid blocking
- * the UI thread.
+ * A MapWorker uses a {@link MapGenerator} to generate map tiles. It runs in a separate thread to avoid blocking the UI
+ * thread.
  */
 public class MapWorker extends PausableThread {
 	private static final String THREAD_NAME = "MapWorker";

@@ -27,10 +27,9 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
 /**
- * ItemizedOverlay is an abstract base class to display {@link OverlayItem OverlayItems}. The class defines some
- * methods to access the backing data structure of deriving subclasses. Besides organizing the redrawing process
- * it handles long press and tap events and calls {@link #onLongPress(int)} and {@link #onTap(int)}
- * respectively.
+ * ItemizedOverlay is an abstract base class to display {@link OverlayItem OverlayItems}. The class defines some methods
+ * to access the backing data structure of deriving subclasses. Besides organizing the redrawing process it handles long
+ * press and tap events and calls {@link #onLongPress(int)} and {@link #onTap(int)} respectively.
  * 
  * @param <Item>
  *            the type of items handled by this overlay.
@@ -174,8 +173,8 @@ public abstract class ItemizedOverlay<Item extends OverlayItem> extends Overlay 
 					int checkBottom = checkItemPoint.y + checkMarkerBounds.bottom;
 
 					// check if the event position is within the bounds of the marker
-					if (checkRight >= eventPosition.x && checkLeft <= eventPosition.x
-							&& checkBottom >= eventPosition.y && checkTop <= eventPosition.y) {
+					if (checkRight >= eventPosition.x && checkLeft <= eventPosition.x && checkBottom >= eventPosition.y
+							&& checkTop <= eventPosition.y) {
 						switch (eventType) {
 							case LONG_PRESS:
 								if (onLongPress(itemIndex.intValue())) {
@@ -208,8 +207,7 @@ public abstract class ItemizedOverlay<Item extends OverlayItem> extends Overlay 
 	protected abstract Item createItem(int index);
 
 	@Override
-	protected void drawOverlayBitmap(Canvas canvas, Point drawPosition, Projection projection,
-			byte drawZoomLevel) {
+	protected void drawOverlayBitmap(Canvas canvas, Point drawPosition, Projection projection, byte drawZoomLevel) {
 		// erase the list of visible items
 		this.visibleItemsRedraw.clear();
 

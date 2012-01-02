@@ -12,29 +12,25 @@
  * You should have received a copy of the GNU Lesser General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.mapsforge.mapdatabase;
+package org.mapsforge.android.maps.mapgenerator.tiledownloader;
 
-import org.mapsforge.core.BoundingBox;
-import org.mapsforge.core.GeoPoint;
-import org.mapsforge.core.Tag;
+import junit.framework.Assert;
 
-class MapFileInfoBuilder {
-	BoundingBox boundingBox;
-	String commentText;
-	long fileSize;
-	int fileVersion;
-	boolean hasStartPosition;
-	boolean isDebugFile;
-	String languagePreference;
-	long mapDate;
-	byte numberOfSubFiles;
-	Tag[] poiTags;
-	String projectionName;
-	GeoPoint startPosition;
-	int tilePixelSize;
-	Tag[] wayTags;
+import org.junit.Test;
+import org.mapsforge.core.Tile;
 
-	MapFileInfo build() {
-		return new MapFileInfo(this);
+/**
+ * Tests the {@link MapnikTileDownloader} class.
+ */
+public class MapnikTileDownloaderTest {
+	/**
+	 * Tests the {@link MapnikTileDownloader#getTilePath} method.
+	 */
+	@Test
+	public void getTilePathTest() {
+		TileDownloader tileDownloader = new MapnikTileDownloader();
+		Tile tile = new Tile(1, 2, (byte) 3);
+		String tilePath = tileDownloader.getTilePath(tile);
+		Assert.assertEquals("/3/1/2.png", tilePath);
 	}
 }

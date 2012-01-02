@@ -64,10 +64,8 @@ public class FrameBuffer {
 			return false;
 		}
 
-		double pixelLeft = MercatorProjection.longitudeToPixelX(mapPositionFix.longitude,
-				mapPositionFix.zoomLevel);
-		double pixelTop = MercatorProjection
-				.latitudeToPixelY(mapPositionFix.latitude, mapPositionFix.zoomLevel);
+		double pixelLeft = MercatorProjection.longitudeToPixelX(mapPositionFix.longitude, mapPositionFix.zoomLevel);
+		double pixelTop = MercatorProjection.latitudeToPixelY(mapPositionFix.latitude, mapPositionFix.zoomLevel);
 		pixelLeft -= this.width >> 1;
 		pixelTop -= this.height >> 1;
 

@@ -22,8 +22,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 /**
- * A MapMover moves the map horizontally and vertically at a configurable speed. It runs in a separate thread to
- * avoid blocking the UI thread.
+ * A MapMover moves the map horizontally and vertically at a configurable speed. It runs in a separate thread to avoid
+ * blocking the UI thread.
  */
 public class MapMover extends PausableThread implements KeyEvent.Callback {
 

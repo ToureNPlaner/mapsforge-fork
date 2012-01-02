@@ -25,8 +25,8 @@ import org.mapsforge.core.Tile;
 import android.graphics.Rect;
 
 /**
- * This class place the labels form POIs, area labels and normal labels. The main target is avoiding collisions
- * of these different labels.
+ * This class place the labels form POIs, area labels and normal labels. The main target is avoiding collisions of these
+ * different labels.
  */
 class LabelPlacement {
 	/**
@@ -124,11 +124,11 @@ class LabelPlacement {
 	}
 
 	/**
-	 * This method uses an adapted greedy strategy for the fixed four position model, above, under left and
-	 * right form the point of interest. It uses no priority search tree, because it will not function with
-	 * symbols only with points. Instead it uses two minimum heaps. They work similar to a sweep line algorithm
-	 * but have not a O(n log n +k) runtime. To find the rectangle that has the top edge, I use also a minimum
-	 * Heap. The rectangles are sorted by their y coordinates.
+	 * This method uses an adapted greedy strategy for the fixed four position model, above, under left and right form
+	 * the point of interest. It uses no priority search tree, because it will not function with symbols only with
+	 * points. Instead it uses two minimum heaps. They work similar to a sweep line algorithm but have not a O(n log n
+	 * +k) runtime. To find the rectangle that has the top edge, I use also a minimum Heap. The rectangles are sorted by
+	 * their y coordinates.
 	 * 
 	 * @param labels
 	 *            label positions and text
@@ -136,8 +136,7 @@ class LabelPlacement {
 	 *            symbol positions
 	 * @param areaLabels
 	 *            area label positions and text
-	 * @return list of labels without overlaps with symbols and other labels by the four fixed position greedy
-	 *         strategy
+	 * @return list of labels without overlaps with symbols and other labels by the four fixed position greedy strategy
 	 */
 	private List<PointTextContainer> processFourPointGreedy(List<PointTextContainer> labels,
 			List<SymbolContainer> symbols, List<PointTextContainer> areaLabels) {
@@ -189,24 +188,23 @@ class LabelPlacement {
 
 					// up
 					refPos[z * 4] = new ReferencePosition(tmp.x - tmp.boundary.width() / 2, tmp.y
-							- tmp.symbol.symbol.getHeight() / 2 - dis, z, tmp.boundary.width(),
-							tmp.boundary.height(), tmp.symbol);
+							- tmp.symbol.symbol.getHeight() / 2 - dis, z, tmp.boundary.width(), tmp.boundary.height(),
+							tmp.symbol);
 					// down
 					refPos[z * 4 + 1] = new ReferencePosition(tmp.x - tmp.boundary.width() / 2, tmp.y
-							+ tmp.symbol.symbol.getHeight() / 2 + tmp.boundary.height() + dis, z,
-							tmp.boundary.width(), tmp.boundary.height(), tmp.symbol);
+							+ tmp.symbol.symbol.getHeight() / 2 + tmp.boundary.height() + dis, z, tmp.boundary.width(),
+							tmp.boundary.height(), tmp.symbol);
 					// left
 					refPos[z * 4 + 2] = new ReferencePosition(tmp.x - tmp.symbol.symbol.getWidth() / 2
-							- tmp.boundary.width() - dis, tmp.y + tmp.boundary.height() / 2, z,
-							tmp.boundary.width(), tmp.boundary.height(), tmp.symbol);
-					// right
-					refPos[z * 4 + 3] = new ReferencePosition(tmp.x + tmp.symbol.symbol.getWidth() / 2 + dis,
-							tmp.y + tmp.boundary.height() / 2 - 0.1f, z, tmp.boundary.width(),
+							- tmp.boundary.width() - dis, tmp.y + tmp.boundary.height() / 2, z, tmp.boundary.width(),
 							tmp.boundary.height(), tmp.symbol);
+					// right
+					refPos[z * 4 + 3] = new ReferencePosition(tmp.x + tmp.symbol.symbol.getWidth() / 2 + dis, tmp.y
+							+ tmp.boundary.height() / 2 - 0.1f, z, tmp.boundary.width(), tmp.boundary.height(),
+							tmp.symbol);
 				} else {
-					refPos[z * 4] = new ReferencePosition(labels.get(z).x
-							- ((labels.get(z).boundary.width()) / 2), labels.get(z).y, z,
-							labels.get(z).boundary.width(), labels.get(z).boundary.height(), null);
+					refPos[z * 4] = new ReferencePosition(labels.get(z).x - ((labels.get(z).boundary.width()) / 2),
+							labels.get(z).y, z, labels.get(z).boundary.width(), labels.get(z).boundary.height(), null);
 					refPos[z * 4 + 1] = null;
 					refPos[z * 4 + 2] = null;
 					refPos[z * 4 + 3] = null;
@@ -275,10 +273,9 @@ class LabelPlacement {
 
 	/**
 	 * This method uses an adapted greedy strategy for the fixed two position model, above and under. It uses no
-	 * priority search tree, because it will not function with symbols only with points. Instead it uses two
-	 * minimum heaps. They work similar to a sweep line algorithm but have not a O(n log n +k) runtime. To find
-	 * the rectangle that has the leftest edge, I use also a minimum Heap. The rectangles are sorted by their x
-	 * coordinates.
+	 * priority search tree, because it will not function with symbols only with points. Instead it uses two minimum
+	 * heaps. They work similar to a sweep line algorithm but have not a O(n log n +k) runtime. To find the rectangle
+	 * that has the leftest edge, I use also a minimum Heap. The rectangles are sorted by their x coordinates.
 	 * 
 	 * @param labels
 	 *            label positions and text
@@ -286,8 +283,7 @@ class LabelPlacement {
 	 *            symbol positions
 	 * @param areaLabels
 	 *            area label positions and text
-	 * @return list of labels without overlaps with symbols and other labels by the two fixed position greedy
-	 *         strategy
+	 * @return list of labels without overlaps with symbols and other labels by the two fixed position greedy strategy
 	 */
 	private List<PointTextContainer> processTwoPointGreedy(List<PointTextContainer> labels,
 			List<SymbolContainer> symbols, List<PointTextContainer> areaLabels) {
@@ -415,9 +411,9 @@ class LabelPlacement {
 	}
 
 	/**
-	 * The greedy algorithms need possible label positions, to choose the best among them. This method removes
-	 * the reference points, that are not validate. Not validate means, that the Reference overlap with another
-	 * symbol or label or is outside of the tile.
+	 * The greedy algorithms need possible label positions, to choose the best among them. This method removes the
+	 * reference points, that are not validate. Not validate means, that the Reference overlap with another symbol or
+	 * label or is outside of the tile.
 	 * 
 	 * @param refPos
 	 *            list of the potential positions
@@ -432,16 +428,14 @@ class LabelPlacement {
 
 		for (int i = 0; i < symbols.size(); i++) {
 			this.smb = symbols.get(i);
-			this.rect1 = new android.graphics.Rect((int) this.smb.x - dis, (int) this.smb.y - dis,
-					(int) this.smb.x + this.smb.symbol.getWidth() + dis, (int) this.smb.y
-							+ this.smb.symbol.getHeight() + dis);
+			this.rect1 = new android.graphics.Rect((int) this.smb.x - dis, (int) this.smb.y - dis, (int) this.smb.x
+					+ this.smb.symbol.getWidth() + dis, (int) this.smb.y + this.smb.symbol.getHeight() + dis);
 
 			for (int y = 0; y < refPos.length; y++) {
 				if (refPos[y] != null) {
 
-					this.rect2 = new android.graphics.Rect((int) refPos[y].x,
-							(int) (refPos[y].y - refPos[y].height), (int) (refPos[y].x + refPos[y].width),
-							(int) (refPos[y].y));
+					this.rect2 = new android.graphics.Rect((int) refPos[y].x, (int) (refPos[y].y - refPos[y].height),
+							(int) (refPos[y].x + refPos[y].width), (int) (refPos[y].y));
 
 					if (android.graphics.Rect.intersects(this.rect2, this.rect1)) {
 						refPos[y] = null;
@@ -461,9 +455,8 @@ class LabelPlacement {
 			for (int y = 0; y < refPos.length; y++) {
 				if (refPos[y] != null) {
 
-					this.rect2 = new android.graphics.Rect((int) refPos[y].x,
-							(int) (refPos[y].y - refPos[y].height), (int) (refPos[y].x + refPos[y].width),
-							(int) (refPos[y].y));
+					this.rect2 = new android.graphics.Rect((int) refPos[y].x, (int) (refPos[y].y - refPos[y].height),
+							(int) (refPos[y].x + refPos[y].width), (int) (refPos[y].y));
 
 					if (android.graphics.Rect.intersects(this.rect2, this.rect1)) {
 						refPos[y] = null;
@@ -597,8 +590,7 @@ class LabelPlacement {
 	 * @param pTC
 	 *            list of labels
 	 */
-	private void removeOverlappingSymbolsWithAreaLabels(List<SymbolContainer> symbols,
-			List<PointTextContainer> pTC) {
+	private void removeOverlappingSymbolsWithAreaLabels(List<SymbolContainer> symbols, List<PointTextContainer> pTC) {
 		int dis = this.labelDistanceToSymbol;
 
 		for (int x = 0; x < pTC.size(); x++) {
@@ -644,9 +636,9 @@ class LabelPlacement {
 	}
 
 	/**
-	 * The inputs are all the label and symbol objects of the current tile. The output is overlap free label and
-	 * symbol placement with the greedy strategy. The placement model is either the two fixed point or the four
-	 * fixed point model.
+	 * The inputs are all the label and symbol objects of the current tile. The output is overlap free label and symbol
+	 * placement with the greedy strategy. The placement model is either the two fixed point or the four fixed point
+	 * model.
 	 * 
 	 * @param labels
 	 *            labels from the current tile.
@@ -674,8 +666,7 @@ class LabelPlacement {
 
 			removeOverlappingSymbolsWithAreaLabels(symbols, areaLabels);
 
-			this.dependencyCache
-					.removeOverlappingObjectsWithDependencyOnTile(returnLabels, areaLabels, symbols);
+			this.dependencyCache.removeOverlappingObjectsWithDependencyOnTile(returnLabels, areaLabels, symbols);
 
 			if (!returnLabels.isEmpty()) {
 				switch (PLACEMENT_MODEL) {
@@ -709,9 +700,8 @@ class LabelPlacement {
 
 		for (int x = 0; x < symbols.size(); x++) {
 			this.smb = symbols.get(x);
-			this.rect1 = new android.graphics.Rect((int) this.smb.x - dis, (int) this.smb.y - dis,
-					(int) this.smb.x + this.smb.symbol.getWidth() + dis, (int) this.smb.y
-							+ this.smb.symbol.getHeight() + dis);
+			this.rect1 = new android.graphics.Rect((int) this.smb.x - dis, (int) this.smb.y - dis, (int) this.smb.x
+					+ this.smb.symbol.getWidth() + dis, (int) this.smb.y + this.smb.symbol.getHeight() + dis);
 
 			for (int y = x + 1; y < symbols.size(); y++) {
 				if (y != x) {

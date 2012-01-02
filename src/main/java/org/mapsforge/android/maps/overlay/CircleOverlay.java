@@ -27,13 +27,12 @@ import android.graphics.Path;
 import android.graphics.Point;
 
 /**
- * CircleOverlay is an abstract base class to display {@link OverlayCircle OverlayCircles}. The class defines
- * some methods to access the backing data structure of deriving subclasses. Besides organizing the redrawing
- * process it handles long press and tap events and calls {@link #onLongPress(int)} and {@link #onTap(int)}
- * respectively.
+ * CircleOverlay is an abstract base class to display {@link OverlayCircle OverlayCircles}. The class defines some
+ * methods to access the backing data structure of deriving subclasses. Besides organizing the redrawing process it
+ * handles long press and tap events and calls {@link #onLongPress(int)} and {@link #onTap(int)} respectively.
  * <p>
- * The overlay may be used to indicate positions which have a known accuracy, such as GPS fixes. The radius of
- * the circles is specified in meters and will be automatically converted to pixels at each redraw.
+ * The overlay may be used to indicate positions which have a known accuracy, such as GPS fixes. The radius of the
+ * circles is specified in meters and will be automatically converted to pixels at each redraw.
  * 
  * @param <Circle>
  *            the type of circles handled by this overlay.
@@ -51,8 +50,8 @@ public abstract class CircleOverlay<Circle extends OverlayCircle> extends Overla
 	private List<Integer> visibleCirclesRedraw;
 
 	/**
-	 * Constructs a new CircleOverlay with the given default paints. The drawing quality can be improved by
-	 * enabling {@link Paint#setAntiAlias(boolean) anti-aliasing}.
+	 * Constructs a new CircleOverlay with the given default paints. The drawing quality can be improved by enabling
+	 * {@link Paint#setAntiAlias(boolean) anti-aliasing}.
 	 * 
 	 * @param defaultPaintFill
 	 *            the default paint which will be used to fill the circles (may be null).
@@ -195,8 +194,7 @@ public abstract class CircleOverlay<Circle extends OverlayCircle> extends Overla
 	protected abstract Circle createCircle(int index);
 
 	@Override
-	protected void drawOverlayBitmap(Canvas canvas, Point drawPosition, Projection projection,
-			byte drawZoomLevel) {
+	protected void drawOverlayBitmap(Canvas canvas, Point drawPosition, Projection projection, byte drawZoomLevel) {
 		// erase the list of visible circles
 		this.visibleCirclesRedraw.clear();
 
@@ -239,8 +237,7 @@ public abstract class CircleOverlay<Circle extends OverlayCircle> extends Overla
 						&& (this.circlePosition.y - circleRadius) <= canvas.getHeight()) {
 					// assemble the path
 					this.path.reset();
-					this.path.addCircle(this.circlePosition.x, this.circlePosition.y, circleRadius,
-							Path.Direction.CCW);
+					this.path.addCircle(this.circlePosition.x, this.circlePosition.y, circleRadius, Path.Direction.CCW);
 
 					if (overlayCircle.hasPaint || this.hasDefaultPaint) {
 						drawPathOnCanvas(canvas, overlayCircle);

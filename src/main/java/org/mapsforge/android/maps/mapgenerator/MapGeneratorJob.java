@@ -23,8 +23,8 @@ import org.mapsforge.android.maps.MapViewMode;
 import org.mapsforge.core.Tile;
 
 /**
- * A MapGeneratorJob holds all immutable rendering parameters for a single map image together with a mutable
- * priority field, which indicates the importance of this job.
+ * A MapGeneratorJob holds all immutable rendering parameters for a single map image together with a mutable priority
+ * field, which indicates the importance of this job.
  */
 public class MapGeneratorJob implements Comparable<MapGeneratorJob>, Serializable {
 	private static final long serialVersionUID = 1L;
@@ -60,8 +60,7 @@ public class MapGeneratorJob implements Comparable<MapGeneratorJob>, Serializabl
 	 * @param debugSettings
 	 *            the debug settings for this job.
 	 */
-	public MapGeneratorJob(Tile tile, MapViewMode mapViewMode, JobParameters jobParameters,
-			DebugSettings debugSettings) {
+	public MapGeneratorJob(Tile tile, MapViewMode mapViewMode, JobParameters jobParameters, DebugSettings debugSettings) {
 		this.tile = tile;
 		this.mapViewMode = mapViewMode;
 		this.jobParameters = jobParameters;
