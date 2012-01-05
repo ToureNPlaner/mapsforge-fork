@@ -793,4 +793,12 @@ public class MapView extends ViewGroup {
 			redraw();
 		}
 	}
+    
+    public int getDrawingHeight() {
+        return getHeight();
+    }
+
+    public int getDrawingWidth() {
+        return getWidth();
+    }
 }

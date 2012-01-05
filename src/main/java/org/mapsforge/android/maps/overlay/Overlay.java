@@ -401,12 +401,12 @@ public abstract class Overlay extends Thread {
 		}
 
 		// check if the new dimensions are positive
-		if (this.internalMapView.getWidth() > 0 && this.internalMapView.getHeight() > 0) {
+		if (this.internalMapView.getDrawingWidth() > 0 && this.internalMapView.getDrawingHeight() > 0) {
 			// create the two overlay bitmaps with the correct dimensions
-			this.overlayBitmap1 = Bitmap.createBitmap(this.internalMapView.getWidth(),
-					this.internalMapView.getHeight(), Bitmap.Config.ARGB_8888);
-			this.overlayBitmap2 = Bitmap.createBitmap(this.internalMapView.getWidth(),
-					this.internalMapView.getHeight(), Bitmap.Config.ARGB_8888);
+			this.overlayBitmap1 = Bitmap.createBitmap(this.internalMapView.getDrawingWidth(),
+					this.internalMapView.getDrawingHeight(), Bitmap.Config.ARGB_8888);
+			this.overlayBitmap2 = Bitmap.createBitmap(this.internalMapView.getDrawingWidth(),
+					this.internalMapView.getDrawingHeight(), Bitmap.Config.ARGB_8888);
 			this.redraw = true;
 			this.hasValidDimensions = true;
 		} else {
