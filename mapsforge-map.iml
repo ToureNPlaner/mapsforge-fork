@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" inherit-compiler-output="false">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
@@ -21,6 +21,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.android:android:2.3.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.khronos:opengl-api:gl1.1-android-2.1_r1" level="project" />
     <orderEntry type="library" name="Maven: org.mapsforge:mapsforge-map-reader:0.3.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.10" level="project" />
   </component>
 </module>
 
