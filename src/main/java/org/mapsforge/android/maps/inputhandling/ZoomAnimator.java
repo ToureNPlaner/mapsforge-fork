@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -39,8 +39,6 @@ public class ZoomAnimator extends PausableThread {
 	private float zoomStart;
 
 	/**
-	 * Constructs a new ZoomAnimator which handles the transition from one zoom level to another one.
-	 * 
 	 * @param mapView
 	 *            the MapView whose zoom level changes should be animated.
 	 */
@@ -103,7 +101,7 @@ public class ZoomAnimator extends PausableThread {
 		// check if the animation time is over
 		if (timeElapsed >= DEFAULT_DURATION) {
 			this.executeAnimation = false;
-			this.mapView.redraw();
+			this.mapView.redrawTiles();
 		} else {
 			this.mapView.postInvalidate();
 			sleep(FRAME_LENGTH_IN_MS);

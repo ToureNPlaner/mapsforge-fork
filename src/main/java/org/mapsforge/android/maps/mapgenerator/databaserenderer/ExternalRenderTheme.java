@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -34,8 +34,6 @@ public class ExternalRenderTheme implements JobTheme {
 	private final String renderThemePath;
 
 	/**
-	 * Constructs a new ExternalRenderTheme by reading the given XML file.
-	 * 
 	 * @param renderThemePath
 	 *            the path to the XML render theme file.
 	 * @throws FileNotFoundException

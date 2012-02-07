@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -35,8 +35,6 @@ public class MapWorker extends PausableThread {
 	private final Bitmap tileBitmap;
 
 	/**
-	 * Constructs a new MapWorker for the given MapView.
-	 * 
 	 * @param mapView
 	 *            the MapView for which this MapWorker generates map tiles.
 	 */

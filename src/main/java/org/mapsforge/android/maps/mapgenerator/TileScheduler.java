@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -14,8 +14,9 @@
  */
 package org.mapsforge.android.maps.mapgenerator;
 
-import org.mapsforge.android.maps.MapPositionFix;
 import org.mapsforge.android.maps.MapView;
+import org.mapsforge.core.GeoPoint;
+import org.mapsforge.core.MapPosition;
 import org.mapsforge.core.MercatorProjection;
 import org.mapsforge.core.Tile;
 
@@ -43,20 +44,21 @@ final class TileScheduler {
 		double tileCenterLatitude = MercatorProjection.pixelYToLatitude(tileCenterPixelY, tileZoomLevel);
 
 		// calculate the Euclidian distance from the MapView center to the tile center
-		MapPositionFix mapPositionFix = mapView.getMapPosition().getMapPositionFix();
-		double longitudeDiff = mapPositionFix.longitude - tileCenterLongitude;
-		double latitudeDiff = mapPositionFix.latitude - tileCenterLatitude;
+		MapPosition mapPosition = mapView.getMapPosition().getMapPosition();
+		GeoPoint geoPoint = mapPosition.geoPoint;
+		double longitudeDiff = geoPoint.getLongitude() - tileCenterLongitude;
+		double latitudeDiff = geoPoint.getLatitude() - tileCenterLatitude;
 		double euclidianDistance = Math.sqrt(longitudeDiff * longitudeDiff + latitudeDiff * latitudeDiff);
 
-		if (mapPositionFix.zoomLevel == tileZoomLevel) {
+		if (mapPosition.zoomLevel == tileZoomLevel) {
 			return euclidianDistance;
 		}
 
-		int zoomLevelDiff = Math.abs(mapPositionFix.zoomLevel - tileZoomLevel);
+		int zoomLevelDiff = Math.abs(mapPosition.zoomLevel - tileZoomLevel);
 		double scaleFactor = Math.pow(2, zoomLevelDiff);
 
 		double scaledEuclidianDistance;
-		if (mapPositionFix.zoomLevel < tileZoomLevel) {
+		if (mapPosition.zoomLevel < tileZoomLevel) {
 			scaledEuclidianDistance = euclidianDistance * scaleFactor;
 		} else {
 			scaledEuclidianDistance = euclidianDistance / scaleFactor;

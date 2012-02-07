@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -25,19 +25,22 @@ import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.mapsforge.android.maps.Logger;
+import org.mapsforge.android.AndroidUtils;
 import org.mapsforge.core.Tile;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.os.Build;
 import android.os.Environment;
 
 /**
  * A thread-safe cache for image files with a variable size and LRU policy.
  */
 public class FileSystemTileCache implements TileCache {
+	private static final Logger LOG = Logger.getLogger(FileSystemTileCache.class.getName());
+
 	private static final class ImageFileNameFilter implements FilenameFilter {
 		static final FilenameFilter INSTANCE = new ImageFileNameFilter();
 
@@ -57,11 +60,6 @@ public class FileSystemTileCache implements TileCache {
 	private static final String CACHE_DIRECTORY = "/Android/data/org.mapsforge.android.maps/cache/";
 
 	/**
-	 * Build names to detect the emulator from the Android SDK.
-	 */
-	private static final String[] EMULATOR_NAMES = { "google_sdk", "sdk" };
-
-	/**
 	 * File name extension for cached images.
 	 */
 	private static final String IMAGE_FILE_NAME_EXTENSION = ".tile";
@@ -75,18 +73,6 @@ public class FileSystemTileCache implements TileCache {
 	 * Name of the file used for serialization of the cache map.
 	 */
 	private static final String SERIALIZATION_FILE_NAME = "cache.ser";
-
-	/**
-	 * @return true if the application is running on the Android emulator, false otherwise.
-	 */
-	private static boolean applicationRunsOnAndroidEmulator() {
-		for (int i = 0, n = EMULATOR_NAMES.length; i < n; ++i) {
-			if (Build.PRODUCT.equals(EMULATOR_NAMES[i])) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 	private static File createDirectory(String pathName) {
 		File file = new File(pathName);
@@ -154,10 +140,10 @@ public class FileSystemTileCache implements TileCache {
 
 			return map;
 		} catch (IOException e) {
-			Logger.exception(e);
+			LOG.log(Level.SEVERE, null, e);
 			return null;
 		} catch (ClassNotFoundException e) {
-			Logger.exception(e);
+			LOG.log(Level.SEVERE, null, e);
 			return null;
 		}
 	}
@@ -165,7 +151,7 @@ public class FileSystemTileCache implements TileCache {
 	private static int getCapacity(int capacity) {
 		if (capacity < 0) {
 			throw new IllegalArgumentException("capacity must not be negative: " + capacity);
-		} else if (applicationRunsOnAndroidEmulator()) {
+		} else if (AndroidUtils.applicationRunsOnAndroidEmulator()) {
 			return 0;
 		}
 		return capacity;
@@ -195,7 +181,7 @@ public class FileSystemTileCache implements TileCache {
 
 			return true;
 		} catch (IOException e) {
-			Logger.exception(e);
+			LOG.log(Level.SEVERE, null, e);
 			return false;
 		}
 	}
@@ -286,7 +272,7 @@ public class FileSystemTileCache implements TileCache {
 			this.map.remove(mapGeneratorJob);
 			return null;
 		} catch (IOException e) {
-			Logger.exception(e);
+			LOG.log(Level.SEVERE, null, e);
 			return null;
 		} finally {
 			try {
@@ -294,7 +280,7 @@ public class FileSystemTileCache implements TileCache {
 					fileInputStream.close();
 				}
 			} catch (IOException e) {
-				Logger.exception(e);
+				LOG.log(Level.SEVERE, null, e);
 			}
 		}
 	}
@@ -332,14 +318,14 @@ public class FileSystemTileCache implements TileCache {
 
 			this.map.put(mapGeneratorJob, outputFile);
 		} catch (IOException e) {
-			Logger.exception(e);
+			LOG.log(Level.SEVERE, null, e);
 		} finally {
 			try {
 				if (fileOutputStream != null) {
 					fileOutputStream.close();
 				}
 			} catch (IOException e) {
-				Logger.exception(e);
+				LOG.log(Level.SEVERE, null, e);
 			}
 		}
 	}

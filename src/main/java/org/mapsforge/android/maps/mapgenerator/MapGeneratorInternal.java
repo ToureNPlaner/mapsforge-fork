@@ -12,29 +12,35 @@
  * You should have received a copy of the GNU Lesser General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.mapsforge.android.maps.rendertheme;
+package org.mapsforge.android.maps.mapgenerator;
 
-final class ClosedWayMatcher implements ClosedMatcher {
-	private static final ClosedWayMatcher INSTANCE = new ClosedWayMatcher();
-
-	static ClosedWayMatcher getInstance() {
-		return INSTANCE;
-	}
+/**
+ * Enumeration of all internal MapGenerator implementations.
+ */
+public enum MapGeneratorInternal {
+	/**
+	 * Map tiles are rendered offline.
+	 */
+	DATABASE_RENDERER,
 
 	/**
-	 * Private constructor to prevent instantiation from other classes.
+	 * Map tiles are downloaded from the Mapnik server.
+	 * 
+	 * @see <a href="http://wiki.openstreetmap.org/wiki/Mapnik">Mapnik</a>
 	 */
-	private ClosedWayMatcher() {
-		// do nothing
-	}
+	MAPNIK,
 
-	@Override
-	public boolean isCoveredBy(ClosedMatcher closedMatcher) {
-		return closedMatcher.matches(Closed.YES);
-	}
+	/**
+	 * Map tiles are downloaded from the OpenCycleMap server.
+	 * 
+	 * @see <a href="http://opencyclemap.org/">OpenCycleMap</a>
+	 */
+	OPENCYCLEMAP,
 
-	@Override
-	public boolean matches(Closed closed) {
-		return closed == Closed.YES;
-	}
+	/**
+	 * Map tiles are downloaded from the Osmarender server.
+	 * 
+	 * @see <a href="http://wiki.openstreetmap.org/wiki/Osmarender">Osmarender</a>
+	 */
+	OSMARENDER;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -19,7 +19,6 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 import org.mapsforge.android.maps.DebugSettings;
-import org.mapsforge.android.maps.MapViewMode;
 import org.mapsforge.core.Tile;
 
 /**
@@ -45,24 +44,25 @@ public class MapGeneratorJob implements Comparable<MapGeneratorJob>, Serializabl
 	public final Tile tile;
 
 	private transient int hashCodeValue;
+	private final MapGenerator mapGenerator;
 	private transient double priority;
-	final MapViewMode mapViewMode;
 
 	/**
 	 * Creates a new job for a MapGenerator with the given parameters.
 	 * 
 	 * @param tile
 	 *            the tile which should be generated.
-	 * @param mapViewMode
-	 *            the MapViewMode for this job.
+	 * @param mapGenerator
+	 *            the MapGenerator for this job.
 	 * @param jobParameters
 	 *            the rendering parameters for this job.
 	 * @param debugSettings
 	 *            the debug settings for this job.
 	 */
-	public MapGeneratorJob(Tile tile, MapViewMode mapViewMode, JobParameters jobParameters, DebugSettings debugSettings) {
+	public MapGeneratorJob(Tile tile, MapGenerator mapGenerator, JobParameters jobParameters,
+			DebugSettings debugSettings) {
 		this.tile = tile;
-		this.mapViewMode = mapViewMode;
+		this.mapGenerator = mapGenerator;
 		this.jobParameters = jobParameters;
 		this.debugSettings = debugSettings;
 		calculateTransientValues();
@@ -101,7 +101,7 @@ public class MapGeneratorJob implements Comparable<MapGeneratorJob>, Serializabl
 		} else if (!this.jobParameters.equals(other.jobParameters)) {
 			return false;
 		}
-		if (this.mapViewMode != other.mapViewMode) {
+		if (this.mapGenerator != other.mapGenerator) {
 			return false;
 		}
 		if (this.tile == null) {
@@ -126,7 +126,7 @@ public class MapGeneratorJob implements Comparable<MapGeneratorJob>, Serializabl
 		int result = 1;
 		result = 31 * result + ((this.debugSettings == null) ? 0 : this.debugSettings.hashCode());
 		result = 31 * result + ((this.jobParameters == null) ? 0 : this.jobParameters.hashCode());
-		result = 31 * result + ((this.mapViewMode == null) ? 0 : this.mapViewMode.hashCode());
+		result = 31 * result + ((this.mapGenerator == null) ? 0 : this.mapGenerator.hashCode());
 		result = 31 * result + ((this.tile == null) ? 0 : this.tile.hashCode());
 		return result;
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.mapsforge.android.maps.mapgenerator.MapGenerator;
 import org.mapsforge.core.GeoPoint;
+import org.mapsforge.core.MapPosition;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -66,23 +67,20 @@ public abstract class MapActivity extends Activity {
 	private void restoreMapView(MapView mapView) {
 		SharedPreferences sharedPreferences = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE);
 		if (containsMapViewPosition(sharedPreferences)) {
-			MapViewMode mapViewMode = mapView.getMapViewMode();
-			if (!mapViewMode.requiresInternetConnection() && sharedPreferences.contains(KEY_MAP_FILE)) {
+			MapGenerator mapGenerator = mapView.getMapGenerator();
+			if (!mapGenerator.requiresInternetConnection() && sharedPreferences.contains(KEY_MAP_FILE)) {
 				// get and set the map file
 				mapView.setMapFile(sharedPreferences.getString(KEY_MAP_FILE, null));
 			}
 
 			// get and set the map position and zoom level
-			MapGenerator mapGenerator = mapView.getMapGenerator();
-			GeoPoint defaultStartPoint = mapGenerator.getStartPoint();
-			if (defaultStartPoint != null) {
-				int latitudeE6 = sharedPreferences.getInt(KEY_LATITUDE, defaultStartPoint.latitudeE6);
-				int longitudeE6 = sharedPreferences.getInt(KEY_LONGITUDE, defaultStartPoint.longitudeE6);
-				GeoPoint geoPoint = new GeoPoint(latitudeE6, longitudeE6);
+			int latitudeE6 = sharedPreferences.getInt(KEY_LATITUDE, 0);
+			int longitudeE6 = sharedPreferences.getInt(KEY_LONGITUDE, 0);
+			int zoomLevel = sharedPreferences.getInt(KEY_ZOOM_LEVEL, -1);
 
-				int zoomLevel = sharedPreferences.getInt(KEY_ZOOM_LEVEL, mapGenerator.getZoomLevelDefault());
-				mapView.setCenterAndZoom(geoPoint, (byte) zoomLevel);
-			}
+			GeoPoint geoPoint = new GeoPoint(latitudeE6, longitudeE6);
+			MapPosition mapPosition = new MapPosition(geoPoint, (byte) zoomLevel);
+			mapView.setCenterAndZoom(mapPosition);
 		}
 	}
 
@@ -103,17 +101,19 @@ public abstract class MapActivity extends Activity {
 		editor.clear();
 
 		MapView mapView = this.mapViews.get(0);
-		if (mapView.hasValidCenter()) {
-			// save the map position and zoom level
-			MapPositionFix mapPositionFix = mapView.getMapPosition().getMapPositionFix();
-			editor.putInt(KEY_LATITUDE, mapPositionFix.getLatitudeE6());
-			editor.putInt(KEY_LONGITUDE, mapPositionFix.getLongitudeE6());
-			editor.putInt(KEY_ZOOM_LEVEL, mapPositionFix.zoomLevel);
 
-			if (!mapView.getMapViewMode().requiresInternetConnection() && mapView.getMapFile() != null) {
-				// save the map file
-				editor.putString(KEY_MAP_FILE, mapView.getMapFile());
-			}
+		// save the map position and zoom level
+		MapPosition mapPosition = mapView.getMapPosition().getMapPosition();
+		if (mapPosition != null) {
+			GeoPoint geoPoint = mapPosition.geoPoint;
+			editor.putInt(KEY_LATITUDE, geoPoint.latitudeE6);
+			editor.putInt(KEY_LONGITUDE, geoPoint.longitudeE6);
+			editor.putInt(KEY_ZOOM_LEVEL, mapPosition.zoomLevel);
+		}
+
+		if (!mapView.getMapGenerator().requiresInternetConnection() && mapView.getMapFile() != null) {
+			// save the map file
+			editor.putString(KEY_MAP_FILE, mapView.getMapFile());
 		}
 
 		editor.commit();

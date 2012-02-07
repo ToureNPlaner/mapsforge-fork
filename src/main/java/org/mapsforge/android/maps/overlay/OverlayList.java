@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -34,8 +34,6 @@ public class OverlayList implements List<Overlay>, RandomAccess {
 	private final MapView mapView;
 
 	/**
-	 * Constructs a new OverlayList for the given MapView.
-	 * 
 	 * @param mapView
 	 *            the MapView whose overlays should be handled.
 	 */
