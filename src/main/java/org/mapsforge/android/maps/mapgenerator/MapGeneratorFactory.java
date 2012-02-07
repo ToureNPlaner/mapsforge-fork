@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -14,36 +14,52 @@
  */
 package org.mapsforge.android.maps.mapgenerator;
 
-import org.mapsforge.android.maps.MapView;
-import org.mapsforge.android.maps.MapViewMode;
 import org.mapsforge.android.maps.mapgenerator.databaserenderer.DatabaseRenderer;
 import org.mapsforge.android.maps.mapgenerator.tiledownloader.MapnikTileDownloader;
 import org.mapsforge.android.maps.mapgenerator.tiledownloader.OpenCycleMapTileDownloader;
 import org.mapsforge.android.maps.mapgenerator.tiledownloader.OsmarenderTileDownloader;
 
+import android.util.AttributeSet;
+
 /**
- * A factory class to create MapGenerator instances.
+ * A factory for the internal MapGenerator implementations.
  */
 public final class MapGeneratorFactory {
+	private static final String MAP_GENERATOR_ATTRIBUTE_NAME = "mapGenerator";
+
 	/**
-	 * @param mapView
-	 *            the MapView for which a MapGenerator should be created.
-	 * @return a MapGenerator which fits to the MapViewMode of the MapView.
+	 * @param attributeSet
+	 *            A collection of attributes which includes the desired MapGenerator.
+	 * @return a new MapGenerator instance.
 	 */
-	public static MapGenerator createMapGenerator(MapView mapView) {
-		MapViewMode mapViewMode = mapView.getMapViewMode();
-		switch (mapViewMode) {
-			case CANVAS_RENDERER:
-				return new DatabaseRenderer(mapView.getMapDatabase());
-			case MAPNIK_TILE_DOWNLOAD:
+	public static MapGenerator createMapGenerator(AttributeSet attributeSet) {
+		String mapGeneratorName = attributeSet.getAttributeValue(null, MAP_GENERATOR_ATTRIBUTE_NAME);
+		if (mapGeneratorName == null) {
+			return new DatabaseRenderer();
+		}
+
+		MapGeneratorInternal mapGeneratorInternal = MapGeneratorInternal.valueOf(mapGeneratorName);
+		return MapGeneratorFactory.createMapGenerator(mapGeneratorInternal);
+	}
+
+	/**
+	 * @param mapGeneratorInternal
+	 *            the internal MapGenerator implementation.
+	 * @return a new MapGenerator instance.
+	 */
+	public static MapGenerator createMapGenerator(MapGeneratorInternal mapGeneratorInternal) {
+		switch (mapGeneratorInternal) {
+			case DATABASE_RENDERER:
+				return new DatabaseRenderer();
+			case MAPNIK:
 				return new MapnikTileDownloader();
-			case OPENCYCLEMAP_TILE_DOWNLOAD:
+			case OPENCYCLEMAP:
 				return new OpenCycleMapTileDownloader();
-			case OSMARENDER_TILE_DOWNLOAD:
+			case OSMARENDER:
 				return new OsmarenderTileDownloader();
 		}
 
-		throw new IllegalArgumentException("invalid MapViewMode: " + mapViewMode);
+		throw new IllegalArgumentException("unknown enum value: " + mapGeneratorInternal);
 	}
 
 	private MapGeneratorFactory() {

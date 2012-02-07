@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -17,11 +17,12 @@ package org.mapsforge.android.maps.rendertheme;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.mapsforge.android.maps.Logger;
 import org.mapsforge.android.maps.rendertheme.renderinstruction.Area;
 import org.mapsforge.android.maps.rendertheme.renderinstruction.Caption;
 import org.mapsforge.android.maps.rendertheme.renderinstruction.Circle;
@@ -40,6 +41,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * SAX2 handler to parse XML render theme files.
  */
 public class RenderThemeHandler extends DefaultHandler {
+	private static final Logger LOG = Logger.getLogger(RenderThemeHandler.class.getName());
+
 	private static enum Element {
 		RENDER_THEME, RENDERING_INSTRUCTION, RULE;
 	}
@@ -90,7 +93,7 @@ public class RenderThemeHandler extends DefaultHandler {
 		stringBuilder.append(name);
 		stringBuilder.append('=');
 		stringBuilder.append(value);
-		Logger.debug(stringBuilder.toString());
+		LOG.info(stringBuilder.toString());
 	}
 
 	private Rule currentRule;
@@ -125,7 +128,7 @@ public class RenderThemeHandler extends DefaultHandler {
 
 	@Override
 	public void error(SAXParseException exception) {
-		Logger.exception(exception);
+		LOG.log(Level.SEVERE, null, exception);
 	}
 
 	@Override
@@ -200,7 +203,7 @@ public class RenderThemeHandler extends DefaultHandler {
 
 	@Override
 	public void warning(SAXParseException exception) {
-		Logger.exception(exception);
+		LOG.log(Level.SEVERE, null, exception);
 	}
 
 	private void checkElement(String elementName, Element element) throws SAXException {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -110,8 +110,6 @@ public class OverlayWay {
 	}
 
 	/**
-	 * Constructs a new OverlayWay.
-	 * 
 	 * @param wayNodes
 	 *            the geographical coordinates of the way nodes, must not contain null elements.
 	 * @throws IllegalArgumentException
@@ -122,8 +120,6 @@ public class OverlayWay {
 	}
 
 	/**
-	 * Constructs a new OverlayWay.
-	 * 
 	 * @param wayNodes
 	 *            the geographical coordinates of the way nodes, must not contain null elements.
 	 * @param paintFill
@@ -141,8 +137,6 @@ public class OverlayWay {
 	}
 
 	/**
-	 * Constructs a new OverlayWay.
-	 * 
 	 * @param paintFill
 	 *            the paint which will be used to fill the way (may be null).
 	 * @param paintOutline

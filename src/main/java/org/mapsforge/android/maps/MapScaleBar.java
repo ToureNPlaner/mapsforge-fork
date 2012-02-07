@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -17,6 +17,7 @@ package org.mapsforge.android.maps;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.mapsforge.core.MapPosition;
 import org.mapsforge.core.MercatorProjection;
 
 import android.graphics.Bitmap;
@@ -90,10 +91,11 @@ public class MapScaleBar {
 	}
 
 	private boolean imperialUnits;
-	private MapPositionFix mapPositionFix;
+	private MapPosition mapPosition;
 	private final Bitmap mapScaleBitmap;
 	private final Canvas mapScaleCanvas;
 	private final MapView mapView;
+	private boolean redrawNeeded;
 	private boolean showMapScaleBar;
 	private final Map<TextField, String> textFields;
 
@@ -126,6 +128,7 @@ public class MapScaleBar {
 	 */
 	public void setImperialUnits(boolean imperialUnits) {
 		this.imperialUnits = imperialUnits;
+		this.redrawNeeded = true;
 	}
 
 	/**
@@ -146,6 +149,7 @@ public class MapScaleBar {
 	 */
 	public void setText(TextField textField, String value) {
 		this.textFields.put(textField, value);
+		this.redrawNeeded = true;
 	}
 
 	private void drawScaleBar(float scaleBarLength, Paint paint) {
@@ -159,17 +163,18 @@ public class MapScaleBar {
 	}
 
 	private boolean isRedrawNecessary() {
-		if (this.mapPositionFix == null) {
+		if (this.redrawNeeded || this.mapPosition == null) {
 			return true;
 		}
 
-		MapPositionFix currentMapPositionFix = this.mapView.getMapPosition().getMapPositionFix();
+		MapPosition currentMapPosition = this.mapView.getMapPosition().getMapPosition();
 
-		if (currentMapPositionFix.zoomLevel != this.mapPositionFix.zoomLevel) {
+		if (currentMapPosition.zoomLevel != this.mapPosition.zoomLevel) {
 			return true;
 		}
 
-		double latitudeDiff = Math.abs(currentMapPositionFix.latitude - this.mapPositionFix.latitude);
+		double latitudeDiff = Math.abs(currentMapPosition.geoPoint.getLatitude()
+				- this.mapPosition.geoPoint.getLatitude());
 		if (latitudeDiff > LATITUDE_REDRAW_THRESHOLD) {
 			return true;
 		}
@@ -239,9 +244,9 @@ public class MapScaleBar {
 			return;
 		}
 
-		this.mapPositionFix = this.mapView.getMapPosition().getMapPositionFix();
-		double groundResolution = MercatorProjection.calculateGroundResolution(this.mapPositionFix.latitude,
-				this.mapPositionFix.zoomLevel);
+		this.mapPosition = this.mapView.getMapPosition().getMapPosition();
+		double groundResolution = MercatorProjection.calculateGroundResolution(this.mapPosition.geoPoint.getLatitude(),
+				this.mapPosition.zoomLevel);
 
 		int[] scaleBarValues;
 		if (this.imperialUnits) {
@@ -263,5 +268,6 @@ public class MapScaleBar {
 		}
 
 		redrawMapScaleBitmap(scaleBarLength, mapScaleValue);
+		this.redrawNeeded = false;
 	}
 }

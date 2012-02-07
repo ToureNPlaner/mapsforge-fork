@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -40,9 +40,6 @@ public abstract class WayOverlay<Way extends OverlayWay> extends Overlay {
 	private final Path path;
 
 	/**
-	 * Constructs a new WayOverlay with the given default paints. The drawing quality can be improved by enabling
-	 * {@link Paint#setAntiAlias(boolean) anti-aliasing}.
-	 * 
 	 * @param defaultPaintFill
 	 *            the default paint which will be used to fill the ways (may be null).
 	 * @param defaultPaintOutline

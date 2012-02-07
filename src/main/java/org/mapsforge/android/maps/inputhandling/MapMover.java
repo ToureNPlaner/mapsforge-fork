@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -40,8 +40,6 @@ public class MapMover extends PausableThread implements KeyEvent.Callback {
 	private long timePrevious;
 
 	/**
-	 * Constructs a new MapMover that interacts with the given MapView.
-	 * 
 	 * @param mapView
 	 *            the MapView which should be moved by this MapMover.
 	 */
@@ -122,7 +120,7 @@ public class MapMover extends PausableThread implements KeyEvent.Callback {
 
 			this.mapView.getFrameBuffer().matrixPostTranslate(mapMoveX, mapMoveY);
 			this.mapView.getMapPosition().moveMap(mapMoveX, mapMoveY);
-			this.mapView.redraw();
+			this.mapView.redrawTiles();
 			return true;
 		}
 		return false;
@@ -224,7 +222,7 @@ public class MapMover extends PausableThread implements KeyEvent.Callback {
 
 		// move the map and the overlays
 		this.mapView.getMapPosition().moveMap(timeElapsed * this.moveX, timeElapsed * this.moveY);
-		this.mapView.redraw();
+		this.mapView.redrawTiles();
 		sleep(FRAME_LENGTH_IN_MS);
 	}
 

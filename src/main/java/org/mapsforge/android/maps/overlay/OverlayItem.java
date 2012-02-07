@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -21,7 +21,7 @@ import android.graphics.drawable.Drawable;
 
 /**
  * OverlayItem holds all parameters of a single element on an {@link ItemizedOverlay}, such as position, marker, title
- * and textual description.
+ * and textual description. If the marker is null, the default marker of the overlay will be drawn instead.
  */
 public class OverlayItem {
 	/**
@@ -62,8 +62,6 @@ public class OverlayItem {
 	}
 
 	/**
-	 * Constructs a new OverlayItem which will be drawn with the default marker of the overlay.
-	 * 
 	 * @param point
 	 *            the geographical position of the item (may be null).
 	 * @param title
@@ -79,12 +77,6 @@ public class OverlayItem {
 	}
 
 	/**
-	 * Constructs a new OverlayItem which will be drawn with the given marker. If the marker is null, the default marker
-	 * of the overlay will be drawn instead.
-	 * <p>
-	 * The bounds of the marker must already have been set properly, for example by calling
-	 * {@link ItemizedOverlay#boundCenterBottom(Drawable)}.
-	 * 
 	 * @param point
 	 *            the geographical position of the item (may be null).
 	 * @param title
@@ -92,7 +84,8 @@ public class OverlayItem {
 	 * @param snippet
 	 *            the short description of the item (may be null).
 	 * @param marker
-	 *            the marker that is drawn for the item (may be null).
+	 *            the marker that is drawn for the item (may be null). The bounds of the marker must already have been
+	 *            set properly, for example by calling {@link ItemizedOverlay#boundCenterBottom(Drawable)}.
 	 */
 	public OverlayItem(GeoPoint point, String title, String snippet, Drawable marker) {
 		this.point = point;

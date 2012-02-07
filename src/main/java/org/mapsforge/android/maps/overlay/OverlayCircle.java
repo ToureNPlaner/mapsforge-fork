@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -79,8 +79,6 @@ public class OverlayCircle {
 	}
 
 	/**
-	 * Constructs a new OverlayCircle.
-	 * 
 	 * @param center
 	 *            the geographical coordinates of the center point.
 	 * @param radius
@@ -101,8 +99,6 @@ public class OverlayCircle {
 	}
 
 	/**
-	 * Constructs a new OverlayCircle.
-	 * 
 	 * @param center
 	 *            the geographical coordinates of the center point.
 	 * @param radius
@@ -115,8 +111,6 @@ public class OverlayCircle {
 	}
 
 	/**
-	 * Constructs a new OverlayCircle.
-	 * 
 	 * @param paintFill
 	 *            the paint which will be used to fill the circle (may be null).
 	 * @param paintOutline

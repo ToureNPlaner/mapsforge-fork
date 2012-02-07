@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -18,10 +18,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.mapsforge.android.maps.Logger;
 import org.mapsforge.android.maps.mapgenerator.JobTheme;
 import org.mapsforge.android.maps.mapgenerator.MapGenerator;
 import org.mapsforge.android.maps.mapgenerator.MapGeneratorJob;
@@ -34,7 +35,7 @@ import org.mapsforge.core.Tag;
 import org.mapsforge.core.Tile;
 import org.mapsforge.map.reader.MapDatabase;
 import org.mapsforge.map.reader.MapDatabaseCallback;
-import org.mapsforge.map.reader.MapFileInfo;
+import org.mapsforge.map.reader.header.MapFileInfo;
 import org.xml.sax.SAXException;
 
 import android.graphics.Bitmap;
@@ -45,19 +46,15 @@ import android.graphics.Paint;
  * A DatabaseRenderer renders map tiles by reading from a {@link MapDatabase}.
  */
 public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDatabaseCallback {
+	private static final Logger LOG = Logger.getLogger(DatabaseRenderer.class.getName());
+	private static final Byte DEFAULT_START_ZOOM_LEVEL = Byte.valueOf((byte) 12);
 	private static final byte LAYERS = 11;
-
 	private static final Paint PAINT_WATER_TILE_HIGHTLIGHT = new Paint(Paint.ANTI_ALIAS_FLAG);
-
 	private static final double STROKE_INCREASE = 1.5;
-
 	private static final byte STROKE_MIN_ZOOM_LEVEL = 12;
 	private static final Tag TAG_NATURAL_WATER = new Tag("natural", "water");
-
 	private static final float[][] WATER_TILE_COORDINATES = new float[][] { { 0, 0, Tile.TILE_SIZE, 0, Tile.TILE_SIZE,
 			Tile.TILE_SIZE, 0, Tile.TILE_SIZE, 0, 0 } };
-
-	private static final byte ZOOM_DEFAULT = 5;
 	private static final byte ZOOM_MAX = 22;
 
 	private static RenderTheme getRenderTheme(JobTheme jobTheme) {
@@ -66,18 +63,18 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 			inputStream = jobTheme.getRenderThemeAsStream();
 			return RenderThemeHandler.getRenderTheme(inputStream);
 		} catch (ParserConfigurationException e) {
-			Logger.exception(e);
+			LOG.log(Level.SEVERE, null, e);
 		} catch (SAXException e) {
-			Logger.exception(e);
+			LOG.log(Level.SEVERE, null, e);
 		} catch (IOException e) {
-			Logger.exception(e);
+			LOG.log(Level.SEVERE, null, e);
 		} finally {
 			try {
 				if (inputStream != null) {
 					inputStream.close();
 				}
 			} catch (IOException e) {
-				Logger.exception(e);
+				LOG.log(Level.SEVERE, null, e);
 			}
 		}
 		return null;
@@ -99,7 +96,7 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 	private Tile currentTile;
 	private List<List<ShapePaintContainer>> drawingLayer;
 	private final LabelPlacement labelPlacement;
-	private final MapDatabase mapDatabase;
+	private MapDatabase mapDatabase;
 	private List<PointTextContainer> nodes;
 	private final List<SymbolContainer> pointSymbols;
 	private float poiX;
@@ -115,14 +112,9 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 	private final List<SymbolContainer> waySymbols;
 
 	/**
-	 * Default constructor which must be called by subclasses.
-	 * 
-	 * @param mapDatabase
-	 *            the MapDatabase from which the map data will be read.
+	 * Constructs a new DatabaseRenderer.
 	 */
-	public DatabaseRenderer(MapDatabase mapDatabase) {
-		this.mapDatabase = mapDatabase;
-
+	public DatabaseRenderer() {
 		this.canvasRasterer = new CanvasRasterer();
 		this.labelPlacement = new LabelPlacement();
 
@@ -173,7 +165,9 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 			this.previousTextScale = textScale;
 		}
 
-		this.mapDatabase.executeQuery(this.currentTile, this);
+		if (this.mapDatabase != null) {
+			this.mapDatabase.executeQuery(this.currentTile, this);
+		}
 
 		this.nodes = this.labelPlacement.placeLabels(this.nodes, this.pointSymbols, this.areaLabels, this.currentTile);
 
@@ -201,12 +195,12 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 
 	@Override
 	public GeoPoint getStartPoint() {
-		if (this.mapDatabase.hasOpenFile()) {
+		if (this.mapDatabase != null && this.mapDatabase.hasOpenFile()) {
 			MapFileInfo mapFileInfo = this.mapDatabase.getMapFileInfo();
-			if (mapFileInfo.getStartPosition() != null) {
-				return mapFileInfo.getStartPosition();
-			} else if (mapFileInfo.getMapCenter() != null) {
-				return mapFileInfo.getMapCenter();
+			if (mapFileInfo.startPosition != null) {
+				return mapFileInfo.startPosition;
+			} else if (mapFileInfo.mapCenter != null) {
+				return mapFileInfo.mapCenter;
 			}
 		}
 
@@ -214,8 +208,15 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 	}
 
 	@Override
-	public byte getZoomLevelDefault() {
-		return ZOOM_DEFAULT;
+	public Byte getStartZoomLevel() {
+		if (this.mapDatabase != null && this.mapDatabase.hasOpenFile()) {
+			MapFileInfo mapFileInfo = this.mapDatabase.getMapFileInfo();
+			if (mapFileInfo.startZoomLevel != null) {
+				return mapFileInfo.startZoomLevel;
+			}
+		}
+
+		return DEFAULT_START_ZOOM_LEVEL;
 	}
 
 	@Override
@@ -308,6 +309,19 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 	@Override
 	public void renderWayText(String textKey, Paint paint, Paint outline) {
 		WayDecorator.renderText(textKey, paint, outline, this.coordinates, this.wayNames);
+	}
+
+	@Override
+	public boolean requiresInternetConnection() {
+		return false;
+	}
+
+	/**
+	 * @param mapDatabase
+	 *            the MapDatabase from which the map data will be read.
+	 */
+	public void setMapDatabase(MapDatabase mapDatabase) {
+		this.mapDatabase = mapDatabase;
 	}
 
 	private void clearLists() {

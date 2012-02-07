@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -15,18 +15,19 @@
 package org.mapsforge.android.maps;
 
 import org.mapsforge.core.GeoPoint;
+import org.mapsforge.core.MapPosition;
 import org.mapsforge.core.MercatorProjection;
 
 /**
  * A MapPosition stores the latitude and longitude coordinate of a MapView together with its zoom level.
  */
-public class MapPosition {
+public class MapViewPosition {
 	private double latitude;
 	private double longitude;
 	private final MapView mapView;
 	private byte zoomLevel;
 
-	MapPosition(MapView mapView) {
+	MapViewPosition(MapView mapView) {
 		this.mapView = mapView;
 
 		this.latitude = Double.NaN;
@@ -42,10 +43,15 @@ public class MapPosition {
 	}
 
 	/**
-	 * @return an immutable MapPositionFix created from the current map position.
+	 * @return an immutable MapPosition or null, if this map position is not valid.
+	 * @see #isValid()
 	 */
-	public synchronized MapPositionFix getMapPositionFix() {
-		return new MapPositionFix(this.latitude, this.longitude, this.zoomLevel);
+	public synchronized MapPosition getMapPosition() {
+		if (!isValid()) {
+			return null;
+		}
+		GeoPoint geoPoint = new GeoPoint(this.latitude, this.longitude);
+		return new MapPosition(geoPoint, this.zoomLevel);
 	}
 
 	/**
@@ -53,6 +59,29 @@ public class MapPosition {
 	 */
 	public synchronized byte getZoomLevel() {
 		return this.zoomLevel;
+	}
+
+	/**
+	 * @return true if this MapViewPosition is valid, false otherwise.
+	 */
+	public synchronized boolean isValid() {
+		if (Double.isNaN(this.latitude)) {
+			return false;
+		} else if (this.latitude < MercatorProjection.LATITUDE_MIN) {
+			return false;
+		} else if (this.latitude > MercatorProjection.LATITUDE_MAX) {
+			return false;
+		}
+
+		if (Double.isNaN(this.longitude)) {
+			return false;
+		} else if (this.longitude < MercatorProjection.LONGITUDE_MIN) {
+			return false;
+		} else if (this.longitude > MercatorProjection.LONGITUDE_MAX) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -74,33 +103,16 @@ public class MapPosition {
 		this.longitude = MercatorProjection.limitLongitude(this.longitude);
 	}
 
-	/**
-	 * @return true if this MapViewPosition is valid, false otherwise.
-	 */
-	synchronized boolean isValid() {
-		if (Double.isNaN(this.latitude)) {
-			return false;
-		} else if (this.latitude < MercatorProjection.LATITUDE_MIN) {
-			return false;
-		} else if (this.latitude > MercatorProjection.LATITUDE_MAX) {
-			return false;
-		}
-
-		if (Double.isNaN(this.longitude)) {
-			return false;
-		} else if (this.longitude < MercatorProjection.LONGITUDE_MIN) {
-			return false;
-		} else if (this.longitude > MercatorProjection.LONGITUDE_MAX) {
-			return false;
-		}
-
-		return true;
-	}
-
-	synchronized void setMapCenterAndZoomLevel(GeoPoint geoPoint, byte zoomLevel) {
+	synchronized void setMapCenter(GeoPoint geoPoint) {
 		this.latitude = MercatorProjection.limitLatitude(geoPoint.getLatitude());
 		this.longitude = MercatorProjection.limitLongitude(geoPoint.getLongitude());
-		this.zoomLevel = this.mapView.limitZoomLevel(zoomLevel);
+	}
+
+	synchronized void setMapCenterAndZoomLevel(MapPosition mapPosition) {
+		GeoPoint geoPoint = mapPosition.geoPoint;
+		this.latitude = MercatorProjection.limitLatitude(geoPoint.getLatitude());
+		this.longitude = MercatorProjection.limitLongitude(geoPoint.getLongitude());
+		this.zoomLevel = this.mapView.limitZoomLevel(mapPosition.zoomLevel);
 	}
 
 	synchronized void setZoomLevel(byte zoomLevel) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2011 mapsforge.org
+ * Copyright 2010, 2011, 2012 mapsforge.org
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -18,8 +18,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.mapsforge.android.maps.Logger;
 import org.mapsforge.android.maps.mapgenerator.MapGenerator;
 import org.mapsforge.android.maps.mapgenerator.MapGeneratorJob;
 import org.mapsforge.core.GeoPoint;
@@ -32,15 +33,16 @@ import android.graphics.BitmapFactory;
  * Abstract base class for downloading map tiles from a server.
  */
 public abstract class TileDownloader implements MapGenerator {
-	private static final byte DEFAULT_ZOOM_LEVEL = 5;
+	private static final Logger LOG = Logger.getLogger(TileDownloader.class.getName());
 	private static final GeoPoint START_POINT = new GeoPoint(51.33, 10.45);
+	private static final Byte START_ZOOM_LEVEL = Byte.valueOf((byte) 5);
 
 	private final int[] pixels;
 
 	/**
 	 * Default constructor that must be called by subclasses.
 	 */
-	TileDownloader() {
+	protected TileDownloader() {
 		this.pixels = new int[Tile.TILE_SIZE * Tile.TILE_SIZE];
 	}
 
@@ -71,10 +73,10 @@ public abstract class TileDownloader implements MapGenerator {
 			bitmap.setPixels(this.pixels, 0, Tile.TILE_SIZE, 0, 0, Tile.TILE_SIZE, Tile.TILE_SIZE);
 			return true;
 		} catch (UnknownHostException e) {
-			Logger.debug(e.getMessage());
+			LOG.log(Level.SEVERE, null, e);
 			return false;
 		} catch (IOException e) {
-			Logger.exception(e);
+			LOG.log(Level.SEVERE, null, e);
 			return false;
 		}
 	}
@@ -94,6 +96,11 @@ public abstract class TileDownloader implements MapGenerator {
 		return START_POINT;
 	}
 
+	@Override
+	public final Byte getStartZoomLevel() {
+		return START_ZOOM_LEVEL;
+	}
+
 	/**
 	 * @param tile
 	 *            the tile for which a map image is required.
@@ -102,7 +109,7 @@ public abstract class TileDownloader implements MapGenerator {
 	public abstract String getTilePath(Tile tile);
 
 	@Override
-	public final byte getZoomLevelDefault() {
-		return DEFAULT_ZOOM_LEVEL;
+	public final boolean requiresInternetConnection() {
+		return true;
 	}
 }
