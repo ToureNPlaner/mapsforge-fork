@@ -30,11 +30,13 @@ public class MultiTouchHandler extends TouchEventHandler {
 	private int activePointerId;
 	private long multiTouchDownTime;
 	private final ScaleGestureDetector scaleGestureDetector;
+	private final DragAndDropDetector dragAndDropDetector;
 
 	MultiTouchHandler(Context context, MapView mapView) {
 		super(context, mapView);
 		this.activePointerId = INVALID_POINTER_ID;
 		this.scaleGestureDetector = new ScaleGestureDetector(context, new ScaleListener(this.mapView));
+		this.dragAndDropDetector = new DragAndDropDetector(this);
 	}
 
 	@Override
@@ -45,6 +47,7 @@ public class MultiTouchHandler extends TouchEventHandler {
 	private boolean onActionCancel() {
 		this.longPressDetector.pressStop();
 		this.activePointerId = INVALID_POINTER_ID;
+		dragAndDropDetector.onActionCancel();
 		return true;
 	}
 
@@ -55,6 +58,12 @@ public class MultiTouchHandler extends TouchEventHandler {
 		this.moveThresholdReached = false;
 		// save the ID of the pointer
 		this.activePointerId = motionEvent.getPointerId(0);
+
+		int pointerIndex = motionEvent.findPointerIndex(this.activePointerId);
+		GeoPoint tapPoint = this.mapView.getProjection().fromPixels((int) motionEvent.getX(pointerIndex),
+				(int) motionEvent.getY(pointerIndex));
+		dragAndDropDetector.rememberStartPoint(tapPoint);
+
 		return true;
 	}
 
@@ -62,6 +71,12 @@ public class MultiTouchHandler extends TouchEventHandler {
 		int pointerIndex = motionEvent.findPointerIndex(this.activePointerId);
 
 		if (this.scaleGestureDetector.isInProgress()) {
+			return true;
+		}
+
+		GeoPoint tapPoint = this.mapView.getProjection().fromPixels((int) motionEvent.getX(pointerIndex),
+				(int) motionEvent.getY(pointerIndex));
+		if(this.dragAndDropDetector.onActionMove(tapPoint)) {
 			return true;
 		}
 
@@ -73,6 +88,11 @@ public class MultiTouchHandler extends TouchEventHandler {
 			if (Math.abs(moveX) > this.mapMoveDelta || Math.abs(moveY) > this.mapMoveDelta) {
 				// the map movement threshold has been reached
 				this.longPressDetector.pressStop();
+				if(!this.longPressDetector.isEventHandled()) {
+					if(dragAndDropDetector.onActionDown()) {
+						return true;
+					}
+				}
 				this.moveThresholdReached = true;
 
 				// save the position of the event
@@ -129,6 +149,13 @@ public class MultiTouchHandler extends TouchEventHandler {
 		this.longPressDetector.pressStop();
 		int pointerIndex = motionEvent.findPointerIndex(this.activePointerId);
 		this.activePointerId = INVALID_POINTER_ID;
+
+		GeoPoint tapPoint = this.mapView.getProjection().fromPixels((int) motionEvent.getX(pointerIndex),
+				(int) motionEvent.getY(pointerIndex));
+		if(dragAndDropDetector.onActionUp(tapPoint)) {
+			return true;
+		}
+
 		if (this.moveThresholdReached || this.longPressDetector.isEventHandled()) {
 			this.previousEventTap = false;
 		} else {
@@ -157,8 +184,6 @@ public class MultiTouchHandler extends TouchEventHandler {
 			this.previousTapY = motionEvent.getY(pointerIndex);
 			this.previousTapTime = motionEvent.getEventTime();
 
-			GeoPoint tapPoint = this.mapView.getProjection().fromPixels((int) motionEvent.getX(pointerIndex),
-					(int) motionEvent.getY(pointerIndex));
 			synchronized (this.mapView.getOverlays()) {
 				for (int i = this.mapView.getOverlays().size() - 1; i >= 0; --i) {
 					if (this.mapView.getOverlays().get(i).onTap(tapPoint, this.mapView)) {

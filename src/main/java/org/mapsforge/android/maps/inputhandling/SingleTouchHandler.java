@@ -24,9 +24,11 @@ import android.view.MotionEvent;
  * Implementation for single-touch capable devices.
  */
 public class SingleTouchHandler extends TouchEventHandler {
+	private final DragAndDropDetector dragAndDropDetector;
 
 	SingleTouchHandler(Context context, MapView mapView) {
 		super(context, mapView);
+		this.dragAndDropDetector = new DragAndDropDetector(this);
 	}
 
 	@Override
@@ -36,6 +38,7 @@ public class SingleTouchHandler extends TouchEventHandler {
 
 	private boolean onActionCancel() {
 		this.longPressDetector.pressStop();
+		dragAndDropDetector.onActionCancel();
 		return true;
 	}
 
@@ -45,6 +48,10 @@ public class SingleTouchHandler extends TouchEventHandler {
 		this.previousPositionX = motionEvent.getX();
 		this.previousPositionY = motionEvent.getY();
 		this.moveThresholdReached = false;
+
+		GeoPoint tapPoint = this.mapView.getProjection().fromPixels((int) motionEvent.getX(),
+				(int) motionEvent.getY());
+		dragAndDropDetector.rememberStartPoint(tapPoint);
 		return true;
 	}
 
@@ -53,10 +60,21 @@ public class SingleTouchHandler extends TouchEventHandler {
 		float moveX = motionEvent.getX() - this.previousPositionX;
 		float moveY = motionEvent.getY() - this.previousPositionY;
 
+		GeoPoint tapPoint = this.mapView.getProjection().fromPixels((int) motionEvent.getX(),
+				(int) motionEvent.getY());
+		if(dragAndDropDetector.onActionMove(tapPoint)) {
+			return true;
+		}
+
 		if (!this.moveThresholdReached) {
 			if (Math.abs(moveX) > this.mapMoveDelta || Math.abs(moveY) > this.mapMoveDelta) {
 				// the map movement threshold has been reached
 				this.longPressDetector.pressStop();
+				if(!this.longPressDetector.isEventHandled()) {
+					if(dragAndDropDetector.onActionDown()) {
+						return true;
+					}
+				}
 				this.moveThresholdReached = true;
 
 				// save the position of the event
@@ -78,6 +96,13 @@ public class SingleTouchHandler extends TouchEventHandler {
 
 	private boolean onActionUp(MotionEvent motionEvent) {
 		this.longPressDetector.pressStop();
+
+		GeoPoint tapPoint = this.mapView.getProjection().fromPixels((int) motionEvent.getX(),
+				(int) motionEvent.getY());
+		if(dragAndDropDetector.onActionUp(tapPoint)) {
+			return true;
+		}
+
 		if (this.moveThresholdReached || this.longPressDetector.isEventHandled()) {
 			this.previousEventTap = false;
 		} else {
@@ -106,8 +131,6 @@ public class SingleTouchHandler extends TouchEventHandler {
 			this.previousTapY = motionEvent.getY();
 			this.previousTapTime = motionEvent.getEventTime();
 
-			GeoPoint tapPoint = this.mapView.getProjection().fromPixels((int) motionEvent.getX(),
-					(int) motionEvent.getY());
 			synchronized (this.mapView.getOverlays()) {
 				for (int i = this.mapView.getOverlays().size() - 1; i >= 0; --i) {
 					if (this.mapView.getOverlays().get(i).onTap(tapPoint, this.mapView)) {

@@ -50,7 +50,14 @@ public abstract class Overlay extends Thread {
 		 * 
 		 * @see Overlay#onTap(GeoPoint, MapView)
 		 */
-		TAP;
+		TAP,
+
+		/**
+		 * A drag event.
+		 * 
+		 * @see Overlay#onDragStart(GeoPoint, MapView)
+		 */
+		DRAG
 	}
 
 	private static final String THREAD_NAME = "Overlay";
@@ -193,6 +200,31 @@ public abstract class Overlay extends Thread {
 			this.changedSize = true;
 			notify();
 		}
+	}
+
+	/**
+	 * Handles a drag event. A drag event is only triggered if the pointer has been moved and no long press event has
+	 * occured. A return value of true indicates that the drag event has been handled by this overlay.
+	 * <p>
+	 * The default implementation of this method does nothing and returns false.
+	 *
+	 * @param geoPoint
+	 *            the point which has been tapped.
+	 * @param mapView
+	 *            the {@link MapView} that triggered the tap event.
+	 * @return true if the tap event was handled, false otherwise.
+	 */
+	public boolean onDragStart(GeoPoint geoPoint, MapView mapView) {
+		return false;
+	}
+
+	public void onDragStop(GeoPoint geoPoint, MapView mapView) {
+	}
+
+	public void onDragMove(GeoPoint geoPoint, MapView mapView) {
+	}
+
+	public void onDragCancel() {
 	}
 
 	/**

@@ -103,6 +103,14 @@ public abstract class ItemizedOverlay<Item extends OverlayItem> extends Overlay 
 	}
 
 	/**
+	 * Checks whether an item is draggable
+	 */
+	@Override
+	public boolean onDragStart(GeoPoint geoPoint, MapView mapView) {
+		return checkItemHit(geoPoint, mapView, EventType.DRAG);
+	}
+
+	/**
 	 * @return the numbers of items in this overlay.
 	 */
 	public abstract int size();
@@ -132,10 +140,10 @@ public abstract class ItemizedOverlay<Item extends OverlayItem> extends Overlay 
 		synchronized (this.visibleItems) {
 			// iterate over all visible items
 			for (int i = this.visibleItems.size() - 1; i >= 0; --i) {
-				Integer itemIndex = this.visibleItems.get(i);
+				int itemIndex = this.visibleItems.get(i);
 
 				// get the current item
-				Item checkOverlayItem = createItem(itemIndex.intValue());
+				Item checkOverlayItem = createItem(itemIndex);
 				if (checkOverlayItem == null) {
 					continue;
 				}
@@ -175,13 +183,19 @@ public abstract class ItemizedOverlay<Item extends OverlayItem> extends Overlay 
 							&& checkTop <= eventPosition.y) {
 						switch (eventType) {
 							case LONG_PRESS:
-								if (onLongPress(itemIndex.intValue())) {
+								if (onLongPress(itemIndex)) {
 									return true;
 								}
 								break;
 
 							case TAP:
-								if (onTap(itemIndex.intValue())) {
+								if (onTap(itemIndex)) {
+									return true;
+								}
+								break;
+
+							case DRAG:
+								if (onDragStart(itemIndex)) {
 									return true;
 								}
 								break;
@@ -313,6 +327,19 @@ public abstract class ItemizedOverlay<Item extends OverlayItem> extends Overlay 
 	 * @return true if the event was handled, false otherwise.
 	 */
 	protected boolean onTap(int index) {
+		return false;
+	}
+
+	/**
+	 * Handles a drag event.
+	 * <p>
+	 * The default implementation of this method does nothing and returns false.
+	 *
+	 * @param index
+	 *            the index of the item that is dragged.
+	 * @return true if the event was handled, false otherwise.
+	 */
+	protected boolean onDragStart(int index) {
 		return false;
 	}
 
