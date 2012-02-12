@@ -289,6 +289,9 @@ public abstract class Overlay extends Thread {
 		this.overlayBitmap2.eraseColor(Color.TRANSPARENT);
 		this.overlayCanvas.setBitmap(this.overlayBitmap2);
 
+		// workaround for http://code.google.com/p/skia/issues/detail?id=387
+		this.overlayCanvas.setMatrix(this.overlayCanvas.getMatrix());
+
 		// save the zoom level and map position before drawing
 		byte zoomLevelBeforeDraw;
 		synchronized (this.internalMapView) {

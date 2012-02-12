@@ -132,7 +132,7 @@ public abstract class PausableThread extends Thread {
 	 * @return the priority of this thread. The default value is {@link Thread#NORM_PRIORITY}.
 	 */
 	protected int getThreadPriority() {
-		return NORM_PRIORITY;
+		return Thread.NORM_PRIORITY;
 	}
 
 	/**

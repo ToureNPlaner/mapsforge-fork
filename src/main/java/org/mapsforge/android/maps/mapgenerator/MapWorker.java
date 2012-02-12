@@ -88,7 +88,7 @@ public class MapWorker extends PausableThread {
 
 	@Override
 	protected int getThreadPriority() {
-		return NORM_PRIORITY;
+		return (Thread.NORM_PRIORITY + Thread.MIN_PRIORITY) / 2;
 	}
 
 	@Override
