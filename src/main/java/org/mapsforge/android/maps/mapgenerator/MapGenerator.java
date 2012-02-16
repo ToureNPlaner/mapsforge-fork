@@ -18,10 +18,12 @@ import org.mapsforge.core.GeoPoint;
 
 import android.graphics.Bitmap;
 
+import java.io.Serializable;
+
 /**
  * A MapGenerator provides map tiles either by downloading or rendering them.
  */
-public interface MapGenerator {
+public interface MapGenerator extends Serializable {
 	/**
 	 * Called once at the end of the MapGenerator lifecycle.
 	 */
