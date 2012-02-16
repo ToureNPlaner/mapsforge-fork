@@ -282,6 +282,9 @@ public abstract class Overlay extends Thread {
 				redrawOverlay();
 			}
 		}
+		
+		// help the GC
+		internalMapView = null;
 
 		// free the overlay bitmaps memory
 		if (this.overlayBitmap1 != null) {

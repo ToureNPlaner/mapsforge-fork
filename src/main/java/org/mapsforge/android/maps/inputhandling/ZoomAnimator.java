@@ -29,7 +29,7 @@ public class ZoomAnimator extends PausableThread {
 	private static final String THREAD_NAME = "ZoomAnimator";
 
 	private boolean executeAnimation;
-	private final MapView mapView;
+	private MapView mapView;
 	private float pivotX;
 	private float pivotY;
 	private float scaleFactorApplied;
@@ -106,6 +106,11 @@ public class ZoomAnimator extends PausableThread {
 			this.mapView.postInvalidate();
 			sleep(FRAME_LENGTH_IN_MS);
 		}
+	}
+
+	@Override
+	protected void afterRun() {
+		this.mapView = null;
 	}
 
 	@Override

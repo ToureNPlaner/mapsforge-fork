@@ -21,7 +21,7 @@ class LongPressDetector extends Thread {
 
 	private boolean eventHandled;
 	private long pressStartTime;
-	private final TouchEventHandler touchEventHandler;
+	private TouchEventHandler touchEventHandler;
 
 	LongPressDetector(TouchEventHandler touchEventHandler) {
 		super();
@@ -74,6 +74,8 @@ class LongPressDetector extends Thread {
 				pressStop();
 			}
 		}
+		
+		touchEventHandler = null;
 	}
 
 	/**

@@ -54,7 +54,7 @@ public abstract class TouchEventHandler {
 	/**
 	 * Thread for detecting long press events.
 	 */
-	final LongPressDetector longPressDetector;
+	LongPressDetector longPressDetector;
 
 	/**
 	 * Duration in milliseconds for a long press event.

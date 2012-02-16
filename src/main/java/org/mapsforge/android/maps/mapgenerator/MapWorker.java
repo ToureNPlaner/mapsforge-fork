@@ -27,12 +27,12 @@ import android.graphics.Bitmap;
 public class MapWorker extends PausableThread {
 	private static final String THREAD_NAME = "MapWorker";
 
-	private final TileCache fileSystemTileCache;
-	private final TileCache inMemoryTileCache;
-	private final JobQueue jobQueue;
+	private TileCache fileSystemTileCache;
+	private TileCache inMemoryTileCache;
+	private JobQueue jobQueue;
 	private MapGenerator mapGenerator;
-	private final MapView mapView;
-	private final Bitmap tileBitmap;
+	private MapView mapView;
+	private Bitmap tileBitmap;
 
 	/**
 	 * @param mapView
@@ -57,7 +57,13 @@ public class MapWorker extends PausableThread {
 
 	@Override
 	protected void afterRun() {
+		this.mapView = null;
+		this.mapGenerator = null;
+		this.fileSystemTileCache = null;
+		this.inMemoryTileCache = null;
+		this.jobQueue = null;
 		this.tileBitmap.recycle();
+		this.tileBitmap = null;
 	}
 
 	@Override
