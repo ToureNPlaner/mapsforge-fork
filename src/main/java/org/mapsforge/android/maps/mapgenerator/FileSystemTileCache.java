@@ -39,8 +39,6 @@ import android.os.Environment;
  * A thread-safe cache for image files with a variable size and LRU policy.
  */
 public class FileSystemTileCache implements TileCache {
-	private static final Logger LOG = Logger.getLogger(FileSystemTileCache.class.getName());
-
 	private static final class ImageFileNameFilter implements FilenameFilter {
 		static final FilenameFilter INSTANCE = new ImageFileNameFilter();
 
@@ -68,6 +66,8 @@ public class FileSystemTileCache implements TileCache {
 	 * Load factor of the internal HashMap.
 	 */
 	private static final float LOAD_FACTOR = 0.6f;
+
+	private static final Logger LOG = Logger.getLogger(FileSystemTileCache.class.getName());
 
 	/**
 	 * Name of the file used for serialization of the cache map.
@@ -187,8 +187,7 @@ public class FileSystemTileCache implements TileCache {
 	}
 
 	private final Bitmap bitmapGet;
-	private final ByteBuffer byteBufferGet;
-	private final ByteBuffer byteBufferPut;
+	private final ByteBuffer byteBuffer;
 	private final File cacheDirectory;
 	private long cacheId;
 	private int capacity;
@@ -216,8 +215,7 @@ public class FileSystemTileCache implements TileCache {
 		} else {
 			this.map = deserializedMap;
 		}
-		this.byteBufferGet = ByteBuffer.allocate(Tile.TILE_SIZE_IN_BYTES);
-		this.byteBufferPut = ByteBuffer.allocate(Tile.TILE_SIZE_IN_BYTES);
+		this.byteBuffer = ByteBuffer.allocate(Tile.TILE_SIZE_IN_BYTES);
 		this.bitmapGet = Bitmap.createBitmap(Tile.TILE_SIZE, Tile.TILE_SIZE, Config.RGB_565);
 	}
 
@@ -259,11 +257,12 @@ public class FileSystemTileCache implements TileCache {
 			File inputFile = this.map.get(mapGeneratorJob);
 
 			fileInputStream = new FileInputStream(inputFile);
-			byte[] array = this.byteBufferGet.array();
+			byte[] array = this.byteBuffer.array();
 			int bytesRead = fileInputStream.read(array);
 
 			if (bytesRead == array.length) {
-				this.bitmapGet.copyPixelsFromBuffer(this.byteBufferGet);
+				this.byteBuffer.rewind();
+				this.bitmapGet.copyPixelsFromBuffer(this.byteBuffer);
 				return this.bitmapGet;
 			}
 
@@ -309,9 +308,9 @@ public class FileSystemTileCache implements TileCache {
 				outputFile = new File(this.cacheDirectory, this.cacheId + IMAGE_FILE_NAME_EXTENSION);
 			} while (outputFile.exists());
 
-			this.byteBufferPut.rewind();
-			bitmap.copyPixelsToBuffer(this.byteBufferPut);
-			byte[] array = this.byteBufferPut.array();
+			this.byteBuffer.rewind();
+			bitmap.copyPixelsToBuffer(this.byteBuffer);
+			byte[] array = this.byteBuffer.array();
 
 			fileOutputStream = new FileOutputStream(outputFile);
 			fileOutputStream.write(array, 0, array.length);

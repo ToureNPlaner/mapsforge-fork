@@ -35,6 +35,7 @@ import org.mapsforge.android.maps.mapgenerator.MapWorker;
 import org.mapsforge.android.maps.mapgenerator.TileCache;
 import org.mapsforge.android.maps.mapgenerator.databaserenderer.DatabaseRenderer;
 import org.mapsforge.android.maps.mapgenerator.databaserenderer.ExternalRenderTheme;
+import org.mapsforge.android.maps.mapgenerator.tiledownloader.TileDownloader;
 import org.mapsforge.android.maps.overlay.Overlay;
 import org.mapsforge.android.maps.overlay.OverlayList;
 import org.mapsforge.android.maps.rendertheme.InternalRenderTheme;
@@ -378,10 +379,17 @@ public class MapView extends ViewGroup {
 		long tileRight = MercatorProjection.pixelXToTileX(pixelLeft + getWidth(), mapPosition.zoomLevel);
 		long tileBottom = MercatorProjection.pixelYToTileY(pixelTop + getHeight(), mapPosition.zoomLevel);
 
+		String cacheId;
+		if (this.mapGenerator.requiresInternetConnection()) {
+			cacheId = ((TileDownloader) this.mapGenerator).getHostName();
+		} else {
+			cacheId = this.mapFile;
+		}
+
 		for (long tileY = tileTop; tileY <= tileBottom; ++tileY) {
 			for (long tileX = tileLeft; tileX <= tileRight; ++tileX) {
 				Tile tile = new Tile(tileX, tileY, mapPosition.zoomLevel);
-				MapGeneratorJob mapGeneratorJob = new MapGeneratorJob(tile, this.mapGenerator, this.jobParameters,
+				MapGeneratorJob mapGeneratorJob = new MapGeneratorJob(tile, cacheId, this.jobParameters,
 						this.debugSettings);
 
 				if (this.inMemoryTileCache.containsKey(mapGeneratorJob)) {
@@ -451,20 +459,21 @@ public class MapView extends ViewGroup {
 	 * 
 	 * @param mapFile
 	 *            the path to the map file.
-	 * @return true if the map file was set correctly, false otherwise.
+	 * @return a FileOpenResult to describe whether the operation returned successfully.
 	 * @throws UnsupportedOperationException
 	 *             if the current MapGenerator mode works with an Internet connection.
+	 * @throws IllegalArgumentException
+	 *             if the supplied mapFile is null.
 	 */
-	public boolean setMapFile(String mapFile) {
+	public FileOpenResult setMapFile(String mapFile) {
 		if (this.mapGenerator.requiresInternetConnection()) {
 			throw new UnsupportedOperationException();
 		}
 		if (mapFile == null) {
-			// no map file specified
-			return false;
+			throw new IllegalArgumentException("mapFile must not be null");
 		} else if (mapFile.equals(this.mapFile)) {
 			// same map file as before
-			return false;
+			return FileOpenResult.SUCCESS;
 		}
 
 		this.zoomAnimator.pause();
@@ -498,11 +507,11 @@ public class MapView extends ViewGroup {
 			}
 
 			clearAndRedrawMapView();
-			return true;
+			return FileOpenResult.SUCCESS;
 		}
 		this.mapFile = null;
 		clearAndRedrawMapView();
-		return false;
+		return fileOpenResult;
 	}
 
 	/**

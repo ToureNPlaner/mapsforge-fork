@@ -23,7 +23,7 @@ import org.mapsforge.android.maps.mapgenerator.JobTheme;
  */
 public enum InternalRenderTheme implements JobTheme {
 	/**
-	 * A rendering theme similar to the OpenStreetMap Osmarender style.
+	 * A render-theme similar to the OpenStreetMap Osmarender style.
 	 * 
 	 * @see <a href="http://wiki.openstreetmap.org/wiki/Osmarender">Osmarender</a>
 	 */
