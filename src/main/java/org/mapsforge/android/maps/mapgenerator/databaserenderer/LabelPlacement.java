@@ -14,6 +14,7 @@
  */
 package org.mapsforge.android.maps.mapgenerator.databaserenderer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -50,7 +51,92 @@ class LabelPlacement {
 		}
 	}
 
-	private static final boolean DEFAULT = false;
+	static final class ReferencePositionHeightComparator implements Comparator<ReferencePosition>, Serializable {
+		private static final long serialVersionUID = 1L;
+		static final ReferencePositionHeightComparator INSTANCE = new ReferencePositionHeightComparator();
+
+		private ReferencePositionHeightComparator() {
+			// do nothing
+		}
+
+		@Override
+		public int compare(ReferencePosition x, ReferencePosition y) {
+			if (x.y - x.height < y.y - y.height) {
+				return -1;
+			}
+
+			if (x.y - x.height > y.y - y.height) {
+				return 1;
+			}
+			return 0;
+		}
+	}
+
+	static final class ReferencePositionWidthComparator implements Comparator<ReferencePosition>, Serializable {
+		private static final long serialVersionUID = 1L;
+		static final ReferencePositionWidthComparator INSTANCE = new ReferencePositionWidthComparator();
+
+		private ReferencePositionWidthComparator() {
+			// do nothing
+		}
+
+		@Override
+		public int compare(ReferencePosition x, ReferencePosition y) {
+			if (x.x + x.width < y.x + y.width) {
+				return -1;
+			}
+
+			if (x.x + x.width > y.x + y.width) {
+				return 1;
+			}
+
+			return 0;
+		}
+	}
+
+	static final class ReferencePositionXComparator implements Comparator<ReferencePosition>, Serializable {
+		private static final long serialVersionUID = 1L;
+		static final ReferencePositionXComparator INSTANCE = new ReferencePositionXComparator();
+
+		private ReferencePositionXComparator() {
+			// do nothing
+		}
+
+		@Override
+		public int compare(ReferencePosition x, ReferencePosition y) {
+			if (x.x < y.x) {
+				return -1;
+			}
+
+			if (x.x > y.x) {
+				return 1;
+			}
+
+			return 0;
+		}
+	}
+
+	static final class ReferencePositionYComparator implements Comparator<ReferencePosition>, Serializable {
+		private static final long serialVersionUID = 1L;
+		static final ReferencePositionYComparator INSTANCE = new ReferencePositionYComparator();
+
+		private ReferencePositionYComparator() {
+			// do nothing
+		}
+
+		@Override
+		public int compare(ReferencePosition x, ReferencePosition y) {
+			if (x.y < y.y) {
+				return -1;
+			}
+
+			if (x.y > y.y) {
+				return 1;
+			}
+
+			return 0;
+		}
+	}
 
 	private static final int PLACEMENT_MODEL = 1;
 	private int labelDistanceToLabel = 2;
@@ -65,8 +151,8 @@ class LabelPlacement {
 	PointTextContainer label;
 	Rect rect1;
 	Rect rect2;
-	ReferencePosition reference;
-	SymbolContainer smb;
+	ReferencePosition referencePosition;
+	SymbolContainer symbolContainer;
 
 	LabelPlacement() {
 		this.dependencyCache = new DependencyCache();
@@ -82,22 +168,6 @@ class LabelPlacement {
 		for (int i = 0; i < labels.size(); i++) {
 			this.label = labels.get(i);
 			this.label.x = this.label.x - this.label.boundary.width() / 2;
-		}
-	}
-
-	/**
-	 * Centers labels with a safety margin for default rendering.
-	 * 
-	 * @param labels
-	 *            Labels to center
-	 */
-	private void centerLabels2(List<PointTextContainer> labels) {
-		for (int i = 0; i < labels.size(); i++) {
-			this.label = labels.get(i);
-			this.label.x = this.label.x - this.label.boundary.width() / 2;
-			if (this.label.symbol != null) {
-				this.label.y = this.label.y - this.label.symbol.symbol.getHeight() / 2 - 3;
-			}
 		}
 	}
 
@@ -147,35 +217,10 @@ class LabelPlacement {
 
 		// lists that sorts the reference points after the minimum top edge y position
 		PriorityQueue<ReferencePosition> priorUp = new PriorityQueue<ReferencePosition>(labels.size() * 4 * 2
-				+ labels.size() / 10 * 2, new Comparator<ReferencePosition>() {
-			@Override
-			public int compare(ReferencePosition x, ReferencePosition y) {
-				if (x.y < y.y) {
-					return -1;
-				}
-
-				if (x.y > y.y) {
-					return 1;
-				}
-
-				return 0;
-			}
-		});
+				+ labels.size() / 10 * 2, ReferencePositionYComparator.INSTANCE);
 		// lists that sorts the reference points after the minimum bottom edge y position
 		PriorityQueue<ReferencePosition> priorDown = new PriorityQueue<ReferencePosition>(labels.size() * 4 * 2
-				+ labels.size() / 10 * 2, new Comparator<ReferencePosition>() {
-			@Override
-			public int compare(ReferencePosition x, ReferencePosition y) {
-				if (x.y - x.height < y.y - y.height) {
-					return -1;
-				}
-
-				if (x.y - x.height > y.y - y.height) {
-					return 1;
-				}
-				return 0;
-			}
-		});
+				+ labels.size() / 10 * 2, ReferencePositionHeightComparator.INSTANCE);
 
 		PointTextContainer tmp;
 		int dis = this.startDistanceToSymbols;
@@ -216,39 +261,39 @@ class LabelPlacement {
 
 		// do while it gives reference positions
 		for (int i = 0; i < refPos.length; i++) {
-			this.reference = refPos[i];
-			if (this.reference != null) {
-				priorUp.add(this.reference);
-				priorDown.add(this.reference);
+			this.referencePosition = refPos[i];
+			if (this.referencePosition != null) {
+				priorUp.add(this.referencePosition);
+				priorDown.add(this.referencePosition);
 			}
 		}
 
 		while (priorUp.size() != 0) {
-			this.reference = priorUp.remove();
+			this.referencePosition = priorUp.remove();
 
-			this.label = labels.get(this.reference.nodeNumber);
+			this.label = labels.get(this.referencePosition.nodeNumber);
 
-			resolutionSet.add(new PointTextContainer(this.label.text, this.reference.x, this.reference.y,
-					this.label.paintFront, this.label.paintBack, this.label.symbol));
+			resolutionSet.add(new PointTextContainer(this.label.text, this.referencePosition.x,
+					this.referencePosition.y, this.label.paintFront, this.label.paintBack, this.label.symbol));
 
 			if (priorUp.size() == 0) {
 				return resolutionSet;
 			}
 
-			priorUp.remove(refPos[this.reference.nodeNumber * 4 + 0]);
-			priorUp.remove(refPos[this.reference.nodeNumber * 4 + 1]);
-			priorUp.remove(refPos[this.reference.nodeNumber * 4 + 2]);
-			priorUp.remove(refPos[this.reference.nodeNumber * 4 + 3]);
+			priorUp.remove(refPos[this.referencePosition.nodeNumber * 4 + 0]);
+			priorUp.remove(refPos[this.referencePosition.nodeNumber * 4 + 1]);
+			priorUp.remove(refPos[this.referencePosition.nodeNumber * 4 + 2]);
+			priorUp.remove(refPos[this.referencePosition.nodeNumber * 4 + 3]);
 
-			priorDown.remove(refPos[this.reference.nodeNumber * 4 + 0]);
-			priorDown.remove(refPos[this.reference.nodeNumber * 4 + 1]);
-			priorDown.remove(refPos[this.reference.nodeNumber * 4 + 2]);
-			priorDown.remove(refPos[this.reference.nodeNumber * 4 + 3]);
+			priorDown.remove(refPos[this.referencePosition.nodeNumber * 4 + 0]);
+			priorDown.remove(refPos[this.referencePosition.nodeNumber * 4 + 1]);
+			priorDown.remove(refPos[this.referencePosition.nodeNumber * 4 + 2]);
+			priorDown.remove(refPos[this.referencePosition.nodeNumber * 4 + 3]);
 
 			LinkedList<ReferencePosition> linkedRef = new LinkedList<ReferencePosition>();
 
 			while (priorDown.size() != 0) {
-				if (priorDown.peek().x < this.reference.x + this.reference.width) {
+				if (priorDown.peek().x < this.referencePosition.x + this.referencePosition.width) {
 					linkedRef.add(priorDown.remove());
 				} else {
 					break;
@@ -257,9 +302,9 @@ class LabelPlacement {
 			// brute Force collision test (faster then sweep line for a small amount of
 			// objects)
 			for (int i = 0; i < linkedRef.size(); i++) {
-				if ((linkedRef.get(i).x <= this.reference.x + this.reference.width)
-						&& (linkedRef.get(i).y >= this.reference.y - linkedRef.get(i).height)
-						&& (linkedRef.get(i).y <= this.reference.y + linkedRef.get(i).height)) {
+				if ((linkedRef.get(i).x <= this.referencePosition.x + this.referencePosition.width)
+						&& (linkedRef.get(i).y >= this.referencePosition.y - linkedRef.get(i).height)
+						&& (linkedRef.get(i).y <= this.referencePosition.y + linkedRef.get(i).height)) {
 					priorUp.remove(linkedRef.get(i));
 					linkedRef.remove(i);
 					i--;
@@ -293,36 +338,10 @@ class LabelPlacement {
 
 		// lists that sorts the reference points after the minimum right edge x position
 		PriorityQueue<ReferencePosition> priorRight = new PriorityQueue<ReferencePosition>(labels.size() * 2
-				+ labels.size() / 10 * 2, new Comparator<ReferencePosition>() {
-			@Override
-			public int compare(ReferencePosition x, ReferencePosition y) {
-				if (x.x + x.width < y.x + y.width) {
-					return -1;
-				}
-
-				if (x.x + x.width > y.x + y.width) {
-					return 1;
-				}
-
-				return 0;
-			}
-		});
+				+ labels.size() / 10 * 2, ReferencePositionWidthComparator.INSTANCE);
 		// lists that sorts the reference points after the minimum left edge x position
 		PriorityQueue<ReferencePosition> priorLeft = new PriorityQueue<ReferencePosition>(labels.size() * 2
-				+ labels.size() / 10 * 2, new Comparator<ReferencePosition>() {
-			@Override
-			public int compare(ReferencePosition x, ReferencePosition y) {
-				if (x.x < y.x) {
-					return -1;
-				}
-
-				if (x.x > y.x) {
-					return 1;
-				}
-
-				return 0;
-			}
-		});
+				+ labels.size() / 10 * 2, ReferencePositionXComparator.INSTANCE);
 
 		// creates the reference positions
 		for (int z = 0; z < labels.size(); z++) {
@@ -346,38 +365,39 @@ class LabelPlacement {
 		removeNonValidateReferencePosition(refPos, symbols, areaLabels);
 
 		for (int i = 0; i < refPos.length; i++) {
-			this.reference = refPos[i];
-			if (this.reference != null) {
-				priorLeft.add(this.reference);
-				priorRight.add(this.reference);
+			this.referencePosition = refPos[i];
+			if (this.referencePosition != null) {
+				priorLeft.add(this.referencePosition);
+				priorRight.add(this.referencePosition);
 			}
 		}
 
 		while (priorRight.size() != 0) {
-			this.reference = priorRight.remove();
+			this.referencePosition = priorRight.remove();
 
-			this.label = labels.get(this.reference.nodeNumber);
+			this.label = labels.get(this.referencePosition.nodeNumber);
 
-			resolutionSet.add(new PointTextContainer(this.label.text, this.reference.x, this.reference.y,
-					this.label.paintFront, this.label.paintBack, this.reference.symbol));
+			resolutionSet.add(new PointTextContainer(this.label.text, this.referencePosition.x,
+					this.referencePosition.y, this.label.paintFront, this.label.paintBack,
+					this.referencePosition.symbol));
 
 			// Removes the other position that is a possible position for the label of one point
 			// of interest
 
-			priorRight.remove(refPos[this.reference.nodeNumber * 2 + 1]);
+			priorRight.remove(refPos[this.referencePosition.nodeNumber * 2 + 1]);
 
 			if (priorRight.size() == 0) {
 				return resolutionSet;
 			}
 
-			priorLeft.remove(this.reference);
-			priorLeft.remove(refPos[this.reference.nodeNumber * 2 + 1]);
+			priorLeft.remove(this.referencePosition);
+			priorLeft.remove(refPos[this.referencePosition.nodeNumber * 2 + 1]);
 
 			// find overlapping labels and deletes the reference points and delete them
 			LinkedList<ReferencePosition> linkedRef = new LinkedList<ReferencePosition>();
 
 			while (priorLeft.size() != 0) {
-				if (priorLeft.peek().x < this.reference.x + this.reference.width) {
+				if (priorLeft.peek().x < this.referencePosition.x + this.referencePosition.width) {
 					linkedRef.add(priorLeft.remove());
 				} else {
 					break;
@@ -387,9 +407,9 @@ class LabelPlacement {
 			// brute Force collision test (faster then sweep line for a small amount of
 			// objects)
 			for (int i = 0; i < linkedRef.size(); i++) {
-				if ((linkedRef.get(i).x <= this.reference.x + this.reference.width)
-						&& (linkedRef.get(i).y >= this.reference.y - linkedRef.get(i).height)
-						&& (linkedRef.get(i).y <= this.reference.y + linkedRef.get(i).height)) {
+				if ((linkedRef.get(i).x <= this.referencePosition.x + this.referencePosition.width)
+						&& (linkedRef.get(i).y >= this.referencePosition.y - linkedRef.get(i).height)
+						&& (linkedRef.get(i).y <= this.referencePosition.y + linkedRef.get(i).height)) {
 					priorRight.remove(linkedRef.get(i));
 					linkedRef.remove(i);
 					i--;
@@ -427,9 +447,10 @@ class LabelPlacement {
 		int dis = this.labelDistanceToSymbol;
 
 		for (int i = 0; i < symbols.size(); i++) {
-			this.smb = symbols.get(i);
-			this.rect1 = new android.graphics.Rect((int) this.smb.x - dis, (int) this.smb.y - dis, (int) this.smb.x
-					+ this.smb.symbol.getWidth() + dis, (int) this.smb.y + this.smb.symbol.getHeight() + dis);
+			this.symbolContainer = symbols.get(i);
+			this.rect1 = new android.graphics.Rect((int) this.symbolContainer.x - dis, (int) this.symbolContainer.y
+					- dis, (int) this.symbolContainer.x + this.symbolContainer.symbol.getWidth() + dis,
+					(int) this.symbolContainer.y + this.symbolContainer.symbol.getHeight() + dis);
 
 			for (int y = 0; y < refPos.length; y++) {
 				if (refPos[y] != null) {
@@ -534,15 +555,15 @@ class LabelPlacement {
 	 */
 	private void removeOutOfTileSymbols(List<SymbolContainer> symbols) {
 		for (int i = 0; i < symbols.size();) {
-			this.smb = symbols.get(i);
+			this.symbolContainer = symbols.get(i);
 
-			if (this.smb.x > Tile.TILE_SIZE) {
+			if (this.symbolContainer.x > Tile.TILE_SIZE) {
 				symbols.remove(i);
-			} else if (this.smb.y > Tile.TILE_SIZE) {
+			} else if (this.symbolContainer.y > Tile.TILE_SIZE) {
 				symbols.remove(i);
-			} else if (this.smb.x + this.smb.symbol.getWidth() < 0.0f) {
+			} else if (this.symbolContainer.x + this.symbolContainer.symbol.getWidth() < 0.0f) {
 				symbols.remove(i);
-			} else if (this.smb.y + this.smb.symbol.getHeight() < 0.0f) {
+			} else if (this.symbolContainer.y + this.symbolContainer.symbol.getHeight() < 0.0f) {
 				symbols.remove(i);
 			} else {
 				i++;
@@ -601,11 +622,11 @@ class LabelPlacement {
 							+ this.label.boundary.width() + dis), (int) (this.label.y + dis));
 
 			for (int y = 0; y < symbols.size(); y++) {
-				this.smb = symbols.get(y);
+				this.symbolContainer = symbols.get(y);
 
-				this.rect2 = new android.graphics.Rect((int) this.smb.x, (int) this.smb.y,
-						(int) (this.smb.x + this.smb.symbol.getWidth()),
-						(int) (this.smb.y + this.smb.symbol.getHeight()));
+				this.rect2 = new android.graphics.Rect((int) this.symbolContainer.x, (int) this.symbolContainer.y,
+						(int) (this.symbolContainer.x + this.symbolContainer.symbol.getWidth()),
+						(int) (this.symbolContainer.y + this.symbolContainer.symbol.getHeight()));
 
 				if (android.graphics.Rect.intersects(this.rect1, this.rect2)) {
 					symbols.remove(y);
@@ -653,39 +674,35 @@ class LabelPlacement {
 	List<PointTextContainer> placeLabels(List<PointTextContainer> labels, List<SymbolContainer> symbols,
 			List<PointTextContainer> areaLabels, Tile cT) {
 		List<PointTextContainer> returnLabels = labels;
-		if (!DEFAULT) {
-			this.dependencyCache.generateTileAndDependencyOnTile(cT);
+		this.dependencyCache.generateTileAndDependencyOnTile(cT);
 
-			preprocessAreaLabels(areaLabels);
+		preprocessAreaLabels(areaLabels);
 
-			preprocessLabels(returnLabels);
+		preprocessLabels(returnLabels);
 
-			preprocessSymbols(symbols);
+		preprocessSymbols(symbols);
 
-			removeEmptySymbolReferences(returnLabels, symbols);
+		removeEmptySymbolReferences(returnLabels, symbols);
 
-			removeOverlappingSymbolsWithAreaLabels(symbols, areaLabels);
+		removeOverlappingSymbolsWithAreaLabels(symbols, areaLabels);
 
-			this.dependencyCache.removeOverlappingObjectsWithDependencyOnTile(returnLabels, areaLabels, symbols);
+		this.dependencyCache.removeOverlappingObjectsWithDependencyOnTile(returnLabels, areaLabels, symbols);
 
-			if (!returnLabels.isEmpty()) {
-				switch (PLACEMENT_MODEL) {
-					case 0:
-						returnLabels = processTwoPointGreedy(returnLabels, symbols, areaLabels);
-						break;
-					case 1:
-						returnLabels = processFourPointGreedy(returnLabels, symbols, areaLabels);
-						break;
-					default:
-						break;
-				}
+		if (!returnLabels.isEmpty()) {
+			switch (PLACEMENT_MODEL) {
+				case 0:
+					returnLabels = processTwoPointGreedy(returnLabels, symbols, areaLabels);
+					break;
+				case 1:
+					returnLabels = processFourPointGreedy(returnLabels, symbols, areaLabels);
+					break;
+				default:
+					break;
 			}
-
-			this.dependencyCache.fillDependencyOnTile(returnLabels, symbols, areaLabels);
-		} else {
-			centerLabels(areaLabels);
-			centerLabels2(returnLabels);
 		}
+
+		this.dependencyCache.fillDependencyOnTile(returnLabels, symbols, areaLabels);
+
 		return returnLabels;
 	}
 
@@ -699,15 +716,17 @@ class LabelPlacement {
 		int dis = this.symbolDistanceToSymbol;
 
 		for (int x = 0; x < symbols.size(); x++) {
-			this.smb = symbols.get(x);
-			this.rect1 = new android.graphics.Rect((int) this.smb.x - dis, (int) this.smb.y - dis, (int) this.smb.x
-					+ this.smb.symbol.getWidth() + dis, (int) this.smb.y + this.smb.symbol.getHeight() + dis);
+			this.symbolContainer = symbols.get(x);
+			this.rect1 = new android.graphics.Rect((int) this.symbolContainer.x - dis, (int) this.symbolContainer.y
+					- dis, (int) this.symbolContainer.x + this.symbolContainer.symbol.getWidth() + dis,
+					(int) this.symbolContainer.y + this.symbolContainer.symbol.getHeight() + dis);
 
 			for (int y = x + 1; y < symbols.size(); y++) {
 				if (y != x) {
-					this.smb = symbols.get(y);
-					this.rect2 = new android.graphics.Rect((int) this.smb.x, (int) this.smb.y, (int) this.smb.x
-							+ this.smb.symbol.getWidth(), (int) this.smb.y + this.smb.symbol.getHeight());
+					this.symbolContainer = symbols.get(y);
+					this.rect2 = new android.graphics.Rect((int) this.symbolContainer.x, (int) this.symbolContainer.y,
+							(int) this.symbolContainer.x + this.symbolContainer.symbol.getWidth(),
+							(int) this.symbolContainer.y + this.symbolContainer.symbol.getHeight());
 
 					if (android.graphics.Rect.intersects(this.rect2, this.rect1)) {
 						symbols.remove(y);

@@ -14,6 +14,7 @@
  */
 package org.mapsforge.android.maps;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +71,7 @@ public abstract class MapActivity extends Activity {
 			MapGenerator mapGenerator = mapView.getMapGenerator();
 			if (!mapGenerator.requiresInternetConnection() && sharedPreferences.contains(KEY_MAP_FILE)) {
 				// get and set the map file
-				mapView.setMapFile(sharedPreferences.getString(KEY_MAP_FILE, null));
+				mapView.setMapFile(new File(sharedPreferences.getString(KEY_MAP_FILE, null)));
 			}
 
 			// get and set the map position and zoom level
@@ -113,7 +114,7 @@ public abstract class MapActivity extends Activity {
 
 		if (!mapView.getMapGenerator().requiresInternetConnection() && mapView.getMapFile() != null) {
 			// save the map file
-			editor.putString(KEY_MAP_FILE, mapView.getMapFile());
+			editor.putString(KEY_MAP_FILE, mapView.getMapFile().getAbsolutePath());
 		}
 
 		editor.commit();
