@@ -51,7 +51,7 @@ final class GeometryUtils {
 	 * @return true if the given way is closed, false otherwise.
 	 */
 	static boolean isClosedWay(float[] way) {
-		return way[0] == way[way.length - 2] && way[1] == way[way.length - 1];
+		return Float.compare(way[0], way[way.length - 2]) == 0 && Float.compare(way[1], way[way.length - 1]) == 0;
 	}
 
 	private GeometryUtils() {

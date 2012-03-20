@@ -31,29 +31,28 @@ public class ExternalRenderTheme implements JobTheme {
 
 	private final long fileModificationDate;
 	private transient int hashCodeValue;
-	private final String renderThemePath;
+	private final File renderThemeFile;
 
 	/**
-	 * @param renderThemePath
-	 *            the path to the XML render theme file.
+	 * @param renderThemeFile
+	 *            the XML render theme file.
 	 * @throws FileNotFoundException
 	 *             if the file does not exist or cannot be read.
 	 */
-	public ExternalRenderTheme(String renderThemePath) throws FileNotFoundException {
-		File renderThemeFile = new File(renderThemePath);
+	public ExternalRenderTheme(File renderThemeFile) throws FileNotFoundException {
 		if (!renderThemeFile.exists()) {
-			throw new FileNotFoundException("file does not exist: " + renderThemePath);
+			throw new FileNotFoundException("file does not exist: " + renderThemeFile);
 		} else if (!renderThemeFile.isFile()) {
-			throw new FileNotFoundException("not a file: " + renderThemePath);
+			throw new FileNotFoundException("not a file: " + renderThemeFile);
 		} else if (!renderThemeFile.canRead()) {
-			throw new FileNotFoundException("cannot read file: " + renderThemePath);
+			throw new FileNotFoundException("cannot read file: " + renderThemeFile);
 		}
 
 		this.fileModificationDate = renderThemeFile.lastModified();
 		if (this.fileModificationDate == 0L) {
 			throw new FileNotFoundException("cannot read last modification time");
 		}
-		this.renderThemePath = renderThemePath;
+		this.renderThemeFile = renderThemeFile;
 		calculateTransientValues();
 	}
 
@@ -67,9 +66,9 @@ public class ExternalRenderTheme implements JobTheme {
 		ExternalRenderTheme other = (ExternalRenderTheme) obj;
 		if (this.fileModificationDate != other.fileModificationDate) {
 			return false;
-		} else if (this.renderThemePath == null && other.renderThemePath != null) {
+		} else if (this.renderThemeFile == null && other.renderThemeFile != null) {
 			return false;
-		} else if (this.renderThemePath != null && !this.renderThemePath.equals(other.renderThemePath)) {
+		} else if (this.renderThemeFile != null && !this.renderThemeFile.equals(other.renderThemeFile)) {
 			return false;
 		}
 		return true;
@@ -77,7 +76,7 @@ public class ExternalRenderTheme implements JobTheme {
 
 	@Override
 	public InputStream getRenderThemeAsStream() throws FileNotFoundException {
-		return new FileInputStream(this.renderThemePath);
+		return new FileInputStream(this.renderThemeFile);
 	}
 
 	@Override
@@ -91,7 +90,7 @@ public class ExternalRenderTheme implements JobTheme {
 	private int calculateHashCode() {
 		int result = 1;
 		result = 31 * result + (int) (this.fileModificationDate ^ (this.fileModificationDate >>> 32));
-		result = 31 * result + ((this.renderThemePath == null) ? 0 : this.renderThemePath.hashCode());
+		result = 31 * result + ((this.renderThemeFile == null) ? 0 : this.renderThemeFile.hashCode());
 		return result;
 	}
 

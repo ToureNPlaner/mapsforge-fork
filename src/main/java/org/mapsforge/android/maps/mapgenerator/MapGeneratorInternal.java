@@ -35,12 +35,5 @@ public enum MapGeneratorInternal {
 	 * 
 	 * @see <a href="http://opencyclemap.org/">OpenCycleMap</a>
 	 */
-	OPENCYCLEMAP,
-
-	/**
-	 * Map tiles are downloaded from the Osmarender server.
-	 * 
-	 * @see <a href="http://wiki.openstreetmap.org/wiki/Osmarender">Osmarender</a>
-	 */
-	OSMARENDER;
+	OPENCYCLEMAP;
 }

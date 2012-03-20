@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.mapsforge.android.AndroidUtils;
+import org.mapsforge.core.IOUtils;
 import org.mapsforge.core.Tile;
 
 import android.graphics.Bitmap;
@@ -115,24 +116,19 @@ public class FileSystemTileCache implements TileCache {
 	 * @return the deserialized map or null, in case of an error.
 	 */
 	private static Map<MapGeneratorJob, File> deserializeMap(File directory) {
-		try {
-			File serializedMapFile = new File(directory, SERIALIZATION_FILE_NAME);
-			if (!serializedMapFile.exists()) {
-				return null;
-			} else if (!serializedMapFile.isFile()) {
-				return null;
-			} else if (!serializedMapFile.canRead()) {
-				return null;
-			}
+		File serializedMapFile = new File(directory, SERIALIZATION_FILE_NAME);
+		if (!serializedMapFile.exists() || !serializedMapFile.isFile() || !serializedMapFile.canRead()) {
+			return null;
+		}
 
-			FileInputStream fileInputStream = new FileInputStream(serializedMapFile);
-			ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+		FileInputStream fileInputStream = null;
+		ObjectInputStream objectInputStream = null;
+		try {
+			fileInputStream = new FileInputStream(serializedMapFile);
+			objectInputStream = new ObjectInputStream(fileInputStream);
 
 			// the compiler warning in the following line cannot be avoided unfortunately
 			Map<MapGeneratorJob, File> map = (Map<MapGeneratorJob, File>) objectInputStream.readObject();
-
-			objectInputStream.close();
-			fileInputStream.close();
 
 			if (!serializedMapFile.delete()) {
 				serializedMapFile.deleteOnExit();
@@ -145,6 +141,9 @@ public class FileSystemTileCache implements TileCache {
 		} catch (ClassNotFoundException e) {
 			LOG.log(Level.SEVERE, null, e);
 			return null;
+		} finally {
+			IOUtils.closeQuietly(objectInputStream);
+			IOUtils.closeQuietly(fileInputStream);
 		}
 	}
 
@@ -167,22 +166,24 @@ public class FileSystemTileCache implements TileCache {
 	 * @return true if the map was serialized successfully, false otherwise.
 	 */
 	private static boolean serializeMap(File directory, Map<MapGeneratorJob, File> map) {
+		File serializedMapFile = new File(directory, SERIALIZATION_FILE_NAME);
+		if (serializedMapFile.exists() && !serializedMapFile.delete()) {
+			return false;
+		}
+
+		FileOutputStream fileOutputStream = null;
+		ObjectOutputStream objectOutputStream = null;
 		try {
-			File serializedMapFile = new File(directory, SERIALIZATION_FILE_NAME);
-			if (serializedMapFile.exists() && !serializedMapFile.delete()) {
-				return false;
-			}
-
-			FileOutputStream fileOutputStream = new FileOutputStream(serializedMapFile);
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+			fileOutputStream = new FileOutputStream(serializedMapFile);
+			objectOutputStream = new ObjectOutputStream(fileOutputStream);
 			objectOutputStream.writeObject(map);
-			objectOutputStream.close();
-			fileOutputStream.close();
-
 			return true;
 		} catch (IOException e) {
 			LOG.log(Level.SEVERE, null, e);
 			return false;
+		} finally {
+			IOUtils.closeQuietly(objectOutputStream);
+			IOUtils.closeQuietly(fileOutputStream);
 		}
 	}
 
@@ -234,9 +235,12 @@ public class FileSystemTileCache implements TileCache {
 			}
 			this.map.clear();
 
-			for (File file : this.cacheDirectory.listFiles(ImageFileNameFilter.INSTANCE)) {
-				if (!file.delete()) {
-					file.deleteOnExit();
+			File[] filesToDelete = this.cacheDirectory.listFiles(ImageFileNameFilter.INSTANCE);
+			if (filesToDelete != null) {
+				for (File file : filesToDelete) {
+					if (!file.delete()) {
+						file.deleteOnExit();
+					}
 				}
 			}
 

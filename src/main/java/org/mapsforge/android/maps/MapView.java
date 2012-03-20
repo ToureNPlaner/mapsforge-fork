@@ -14,6 +14,7 @@
  */
 package org.mapsforge.android.maps;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -65,7 +66,7 @@ import android.view.ViewGroup;
  * {@link #setMapGeneratorInternal(MapGenerator)} method. Some MapView parameters depend on the selected operation mode.
  * <p>
  * In offline rendering mode a special database file is required which contains the map data. Map files can be stored in
- * any folder. The current map file is set by calling {@link #setMapFile(String)}. To retrieve the current
+ * any folder. The current map file is set by calling {@link #setMapFile(File)}. To retrieve the current
  * {@link MapDatabase}, use the {@link #getMapDatabase()} method.
  * <p>
  * {@link Overlay Overlays} can be used to display geographical data such as points and ways. To draw an overlay on top
@@ -90,7 +91,7 @@ public class MapView extends ViewGroup {
 	private final JobQueue jobQueue;
 	private final MapController mapController;
 	private final MapDatabase mapDatabase;
-	private String mapFile;
+	private File mapFile;
 	private MapGenerator mapGenerator;
 	private final MapMover mapMover;
 	private final MapScaleBar mapScaleBar;
@@ -254,7 +255,7 @@ public class MapView extends ViewGroup {
 	 * @throws UnsupportedOperationException
 	 *             if the current MapGenerator mode works with an Internet connection.
 	 */
-	public String getMapFile() {
+	public File getMapFile() {
 		if (this.mapGenerator.requiresInternetConnection()) {
 			throw new UnsupportedOperationException();
 		}
@@ -368,6 +369,10 @@ public class MapView extends ViewGroup {
 		}
 
 		MapPosition mapPosition = this.mapViewPosition.getMapPosition();
+		if (mapPosition == null) {
+			return;
+		}
+
 		GeoPoint geoPoint = mapPosition.geoPoint;
 		double pixelLeft = MercatorProjection.longitudeToPixelX(geoPoint.getLongitude(), mapPosition.zoomLevel);
 		double pixelTop = MercatorProjection.latitudeToPixelY(geoPoint.getLatitude(), mapPosition.zoomLevel);
@@ -379,7 +384,7 @@ public class MapView extends ViewGroup {
 		long tileRight = MercatorProjection.pixelXToTileX(pixelLeft + getWidth(), mapPosition.zoomLevel);
 		long tileBottom = MercatorProjection.pixelYToTileY(pixelTop + getHeight(), mapPosition.zoomLevel);
 
-		String cacheId;
+		Object cacheId;
 		if (this.mapGenerator.requiresInternetConnection()) {
 			cacheId = ((TileDownloader) this.mapGenerator).getHostName();
 		} else {
@@ -458,14 +463,14 @@ public class MapView extends ViewGroup {
 	 * Sets the map file for this MapView.
 	 * 
 	 * @param mapFile
-	 *            the path to the map file.
+	 *            the map file.
 	 * @return a FileOpenResult to describe whether the operation returned successfully.
 	 * @throws UnsupportedOperationException
 	 *             if the current MapGenerator mode works with an Internet connection.
 	 * @throws IllegalArgumentException
 	 *             if the supplied mapFile is null.
 	 */
-	public FileOpenResult setMapFile(String mapFile) {
+	public FileOpenResult setMapFile(File mapFile) {
 		if (this.mapGenerator.requiresInternetConnection()) {
 			throw new UnsupportedOperationException();
 		}
@@ -528,6 +533,30 @@ public class MapView extends ViewGroup {
 	}
 
 	/**
+	 * Sets the XML file which is used for rendering the map.
+	 * 
+	 * @param renderThemeFile
+	 *            the XML file which defines the rendering theme.
+	 * @throws IllegalArgumentException
+	 *             if the supplied internalRenderTheme is null.
+	 * @throws UnsupportedOperationException
+	 *             if the current MapGenerator does not support render themes.
+	 * @throws FileNotFoundException
+	 *             if the supplied file does not exist, is a directory or cannot be read.
+	 */
+	public void setRenderTheme(File renderThemeFile) throws FileNotFoundException {
+		if (renderThemeFile == null) {
+			throw new IllegalArgumentException("render theme file must not be null");
+		} else if (this.mapGenerator.requiresInternetConnection()) {
+			throw new UnsupportedOperationException();
+		}
+
+		JobTheme jobTheme = new ExternalRenderTheme(renderThemeFile);
+		this.jobParameters = new JobParameters(jobTheme, this.jobParameters.textScale);
+		clearAndRedrawMapView();
+	}
+
+	/**
 	 * Sets the internal theme which is used for rendering the map.
 	 * 
 	 * @param internalRenderTheme
@@ -549,30 +578,6 @@ public class MapView extends ViewGroup {
 	}
 
 	/**
-	 * Sets the theme file which is used for rendering the map.
-	 * 
-	 * @param renderThemePath
-	 *            the path to the XML file which defines the rendering theme.
-	 * @throws IllegalArgumentException
-	 *             if the supplied internalRenderTheme is null.
-	 * @throws UnsupportedOperationException
-	 *             if the current MapGenerator does not support render themes.
-	 * @throws FileNotFoundException
-	 *             if the supplied file does not exist, is a directory or cannot be read.
-	 */
-	public void setRenderTheme(String renderThemePath) throws FileNotFoundException {
-		if (renderThemePath == null) {
-			throw new IllegalArgumentException("render theme path must not be null");
-		} else if (this.mapGenerator.requiresInternetConnection()) {
-			throw new UnsupportedOperationException();
-		}
-
-		JobTheme jobTheme = new ExternalRenderTheme(renderThemePath);
-		this.jobParameters = new JobParameters(jobTheme, this.jobParameters.textScale);
-		clearAndRedrawMapView();
-	}
-
-	/**
 	 * Sets the text scale for the map rendering. Has no effect in downloading mode.
 	 * 
 	 * @param textScale
@@ -587,8 +592,8 @@ public class MapView extends ViewGroup {
 	 * Takes a screenshot of the currently visible map and saves it as a compressed image. Zoom buttons, scale bar, FPS
 	 * counter, overlays, menus and the title bar are not included in the screenshot.
 	 * 
-	 * @param fileName
-	 *            the name of the image file. If the file exists, it will be overwritten.
+	 * @param outputFile
+	 *            the image file. If the file already exists, it will be overwritten.
 	 * @param compressFormat
 	 *            the file format of the compressed image.
 	 * @param quality
@@ -597,8 +602,8 @@ public class MapView extends ViewGroup {
 	 * @throws IOException
 	 *             if an error occurs while writing the image file.
 	 */
-	public boolean takeScreenshot(CompressFormat compressFormat, int quality, String fileName) throws IOException {
-		FileOutputStream outputStream = new FileOutputStream(fileName);
+	public boolean takeScreenshot(CompressFormat compressFormat, int quality, File outputFile) throws IOException {
+		FileOutputStream outputStream = new FileOutputStream(outputFile);
 		boolean success = this.frameBuffer.compress(compressFormat, quality, outputStream);
 		outputStream.close();
 		return success;

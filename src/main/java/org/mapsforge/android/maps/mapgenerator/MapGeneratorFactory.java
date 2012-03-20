@@ -17,7 +17,6 @@ package org.mapsforge.android.maps.mapgenerator;
 import org.mapsforge.android.maps.mapgenerator.databaserenderer.DatabaseRenderer;
 import org.mapsforge.android.maps.mapgenerator.tiledownloader.MapnikTileDownloader;
 import org.mapsforge.android.maps.mapgenerator.tiledownloader.OpenCycleMapTileDownloader;
-import org.mapsforge.android.maps.mapgenerator.tiledownloader.OsmarenderTileDownloader;
 
 import android.util.AttributeSet;
 
@@ -55,8 +54,6 @@ public final class MapGeneratorFactory {
 				return new MapnikTileDownloader();
 			case OPENCYCLEMAP:
 				return new OpenCycleMapTileDownloader();
-			case OSMARENDER:
-				return new OsmarenderTileDownloader();
 		}
 
 		throw new IllegalArgumentException("unknown enum value: " + mapGeneratorInternal);

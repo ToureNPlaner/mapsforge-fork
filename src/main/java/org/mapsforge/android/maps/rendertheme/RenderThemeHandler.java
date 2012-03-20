@@ -41,14 +41,13 @@ import org.xml.sax.helpers.DefaultHandler;
  * SAX2 handler to parse XML render theme files.
  */
 public class RenderThemeHandler extends DefaultHandler {
-	private static final Logger LOG = Logger.getLogger(RenderThemeHandler.class.getName());
-
 	private static enum Element {
 		RENDER_THEME, RENDERING_INSTRUCTION, RULE;
 	}
 
 	private static final String ELEMENT_NAME_RENDER_THEME = "rendertheme";
 	private static final String ELEMENT_NAME_RULE = "rule";
+	private static final Logger LOG = Logger.getLogger(RenderThemeHandler.class.getName());
 	private static final String UNEXPECTED_ELEMENT = "unexpected element: ";
 
 	/**

@@ -32,7 +32,7 @@ final class BitmapUtils {
 	private static InputStream createInputStream(String src) throws FileNotFoundException {
 		if (src.startsWith(PREFIX_JAR)) {
 			String name = src.substring(PREFIX_JAR.length());
-			InputStream inputStream = Thread.currentThread().getClass().getResourceAsStream(name);
+			InputStream inputStream = BitmapUtils.class.getResourceAsStream(name);
 			if (inputStream == null) {
 				throw new FileNotFoundException("resource not found: " + src);
 			}

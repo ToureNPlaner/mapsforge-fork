@@ -46,9 +46,9 @@ import android.graphics.Paint;
  * A DatabaseRenderer renders map tiles by reading from a {@link MapDatabase}.
  */
 public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDatabaseCallback {
-	private static final Logger LOG = Logger.getLogger(DatabaseRenderer.class.getName());
 	private static final Byte DEFAULT_START_ZOOM_LEVEL = Byte.valueOf((byte) 12);
 	private static final byte LAYERS = 11;
+	private static final Logger LOG = Logger.getLogger(DatabaseRenderer.class.getName());
 	private static final Paint PAINT_WATER_TILE_HIGHTLIGHT = new Paint(Paint.ANTI_ALIAS_FLAG);
 	private static final double STROKE_INCREASE = 1.5;
 	private static final byte STROKE_MIN_ZOOM_LEVEL = 12;
@@ -160,7 +160,7 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 		}
 
 		float textScale = mapGeneratorJob.jobParameters.textScale;
-		if (textScale != this.previousTextScale) {
+		if (Float.compare(textScale, this.previousTextScale) != 0) {
 			this.renderTheme.scaleTextSize(textScale);
 			this.previousTextScale = textScale;
 		}

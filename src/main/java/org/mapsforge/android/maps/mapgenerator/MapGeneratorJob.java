@@ -44,7 +44,7 @@ public class MapGeneratorJob implements Comparable<MapGeneratorJob>, Serializabl
 	public final Tile tile;
 
 	private transient int hashCodeValue;
-	private final String mapGeneratorId;
+	private final Object mapGeneratorId;
 	private transient double priority;
 
 	/**
@@ -59,7 +59,7 @@ public class MapGeneratorJob implements Comparable<MapGeneratorJob>, Serializabl
 	 * @param debugSettings
 	 *            the debug settings for this job.
 	 */
-	public MapGeneratorJob(Tile tile, String mapGeneratorId, JobParameters jobParameters, DebugSettings debugSettings) {
+	public MapGeneratorJob(Tile tile, Object mapGeneratorId, JobParameters jobParameters, DebugSettings debugSettings) {
 		this.tile = tile;
 		this.mapGeneratorId = mapGeneratorId;
 		this.jobParameters = jobParameters;
@@ -100,7 +100,11 @@ public class MapGeneratorJob implements Comparable<MapGeneratorJob>, Serializabl
 		} else if (!this.jobParameters.equals(other.jobParameters)) {
 			return false;
 		}
-		if (!this.mapGeneratorId.equals(other.mapGeneratorId)) {
+		if (this.mapGeneratorId == null) {
+			if (other.mapGeneratorId != null) {
+				return false;
+			}
+		} else if (!this.mapGeneratorId.equals(other.mapGeneratorId)) {
 			return false;
 		}
 		if (this.tile == null) {
