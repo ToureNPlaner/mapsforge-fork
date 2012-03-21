@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
 import org.mapsforge.android.maps.mapgenerator.MapGenerator;
 import org.mapsforge.core.GeoPoint;
 import org.mapsforge.core.MapPosition;
@@ -36,12 +37,11 @@ import android.content.SharedPreferences.Editor;
  * When the MapActivity is shut down, the current center position, zoom level and map file of the MapView are saved in a
  * preferences file and restored in the next startup process.
  */
-public abstract class MapActivity extends Activity {
+public abstract class MapActivity extends Activity implements IMapActivity {
 	private static final String KEY_LATITUDE = "latitude";
 	private static final String KEY_LONGITUDE = "longitude";
 	private static final String KEY_MAP_FILE = "mapFile";
 	private static final String KEY_ZOOM_LEVEL = "zoomLevel";
-    private static final String KEY_VIEWMODE = "mapViewMode";
 	private static final String PREFERENCES_FILE = "MapActivity";
 
 	private static boolean containsMapViewPosition(SharedPreferences sharedPreferences) {
@@ -132,7 +132,8 @@ public abstract class MapActivity extends Activity {
 	/**
 	 * @return a unique MapView ID on each call.
 	 */
-	final int getMapViewId() {
+	@Override
+	public final int getMapViewId() {
 		return ++this.lastMapViewId;
 	}
 
@@ -142,8 +143,14 @@ public abstract class MapActivity extends Activity {
 	 * @param mapView
 	 *            the calling MapView.
 	 */
-	final void registerMapView(MapView mapView) {
+	@Override
+	public final void registerMapView(MapView mapView) {
 		this.mapViews.add(mapView);
 		restoreMapView(mapView);
+	}
+
+	@Override
+	public Context getContext() {
+		return this;
 	}
 }

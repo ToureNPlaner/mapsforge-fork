@@ -14,8 +14,8 @@
  */
 /**
  * The mapsforge-map library allows applications to render and display a map without Internet connection. It can
- * be used on all Android devices running version 1.6 or higher. An application needs to extend the
- * {@link org.mapsforge.android.maps.MapActivity} class in order to use a
+ * be used on all Android devices running version 1.6 or higher. An application needs to either extend the
+ * {@link MapActivity} class or implement IMapActivity in order to use a
  * {@link org.mapsforge.android.maps.MapView}. More than one MapView instance may be used simultaneously.
  * <p>
  * The most important classes and methods from the <a href="http://code.google.com/android/add-ons/google-apis/"
