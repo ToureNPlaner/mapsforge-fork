@@ -68,7 +68,7 @@ public class FileSystemTileCache implements TileCache {
 	 */
 	private static final float LOAD_FACTOR = 0.6f;
 
-	private static final Logger LOG = Logger.getLogger(FileSystemTileCache.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(FileSystemTileCache.class.getName());
 
 	/**
 	 * Name of the file used for serialization of the cache map.
@@ -136,10 +136,10 @@ public class FileSystemTileCache implements TileCache {
 
 			return map;
 		} catch (IOException e) {
-			LOG.log(Level.SEVERE, null, e);
+			LOGGER.log(Level.SEVERE, null, e);
 			return null;
 		} catch (ClassNotFoundException e) {
-			LOG.log(Level.SEVERE, null, e);
+			LOGGER.log(Level.SEVERE, null, e);
 			return null;
 		} finally {
 			IOUtils.closeQuietly(objectInputStream);
@@ -179,7 +179,7 @@ public class FileSystemTileCache implements TileCache {
 			objectOutputStream.writeObject(map);
 			return true;
 		} catch (IOException e) {
-			LOG.log(Level.SEVERE, null, e);
+			LOGGER.log(Level.SEVERE, null, e);
 			return false;
 		} finally {
 			IOUtils.closeQuietly(objectOutputStream);
@@ -275,7 +275,7 @@ public class FileSystemTileCache implements TileCache {
 			this.map.remove(mapGeneratorJob);
 			return null;
 		} catch (IOException e) {
-			LOG.log(Level.SEVERE, null, e);
+			LOGGER.log(Level.SEVERE, null, e);
 			return null;
 		} finally {
 			try {
@@ -283,7 +283,7 @@ public class FileSystemTileCache implements TileCache {
 					fileInputStream.close();
 				}
 			} catch (IOException e) {
-				LOG.log(Level.SEVERE, null, e);
+				LOGGER.log(Level.SEVERE, null, e);
 			}
 		}
 	}
@@ -321,14 +321,14 @@ public class FileSystemTileCache implements TileCache {
 
 			this.map.put(mapGeneratorJob, outputFile);
 		} catch (IOException e) {
-			LOG.log(Level.SEVERE, null, e);
+			LOGGER.log(Level.SEVERE, null, e);
 		} finally {
 			try {
 				if (fileOutputStream != null) {
 					fileOutputStream.close();
 				}
 			} catch (IOException e) {
-				LOG.log(Level.SEVERE, null, e);
+				LOGGER.log(Level.SEVERE, null, e);
 			}
 		}
 	}
