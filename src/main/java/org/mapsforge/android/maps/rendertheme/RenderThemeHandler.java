@@ -47,7 +47,7 @@ public class RenderThemeHandler extends DefaultHandler {
 
 	private static final String ELEMENT_NAME_RENDER_THEME = "rendertheme";
 	private static final String ELEMENT_NAME_RULE = "rule";
-	private static final Logger LOG = Logger.getLogger(RenderThemeHandler.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(RenderThemeHandler.class.getName());
 	private static final String UNEXPECTED_ELEMENT = "unexpected element: ";
 
 	/**
@@ -92,7 +92,7 @@ public class RenderThemeHandler extends DefaultHandler {
 		stringBuilder.append(name);
 		stringBuilder.append('=');
 		stringBuilder.append(value);
-		LOG.info(stringBuilder.toString());
+		LOGGER.info(stringBuilder.toString());
 	}
 
 	private Rule currentRule;
@@ -127,7 +127,7 @@ public class RenderThemeHandler extends DefaultHandler {
 
 	@Override
 	public void error(SAXParseException exception) {
-		LOG.log(Level.SEVERE, null, exception);
+		LOGGER.log(Level.SEVERE, null, exception);
 	}
 
 	@Override
@@ -202,7 +202,7 @@ public class RenderThemeHandler extends DefaultHandler {
 
 	@Override
 	public void warning(SAXParseException exception) {
-		LOG.log(Level.SEVERE, null, exception);
+		LOGGER.log(Level.SEVERE, null, exception);
 	}
 
 	private void checkElement(String elementName, Element element) throws SAXException {

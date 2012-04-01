@@ -18,7 +18,7 @@ import java.util.Stack;
 import java.util.logging.Logger;
 
 final class RuleOptimizer {
-	private static final Logger LOG = Logger.getLogger(RuleOptimizer.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(RuleOptimizer.class.getName());
 
 	private static AttributeMatcher optimizeKeyMatcher(AttributeMatcher attributeMatcher, Stack<Rule> ruleStack) {
 		for (int i = 0, n = ruleStack.size(); i < n; ++i) {
@@ -70,7 +70,7 @@ final class RuleOptimizer {
 			if (ruleStack.get(i).closedMatcher.isCoveredBy(closedMatcher)) {
 				return AnyMatcher.getInstance();
 			} else if (!closedMatcher.isCoveredBy(ruleStack.get(i).closedMatcher)) {
-				LOG.warning("unreachable rule (closed)");
+				LOGGER.warning("unreachable rule (closed)");
 			}
 		}
 
@@ -86,7 +86,7 @@ final class RuleOptimizer {
 			if (ruleStack.get(i).elementMatcher.isCoveredBy(elementMatcher)) {
 				return AnyMatcher.getInstance();
 			} else if (!elementMatcher.isCoveredBy(ruleStack.get(i).elementMatcher)) {
-				LOG.warning("unreachable rule (e)");
+				LOGGER.warning("unreachable rule (e)");
 			}
 		}
 

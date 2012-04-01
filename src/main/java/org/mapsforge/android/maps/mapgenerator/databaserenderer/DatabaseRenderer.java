@@ -34,7 +34,9 @@ import org.mapsforge.core.MercatorProjection;
 import org.mapsforge.core.Tag;
 import org.mapsforge.core.Tile;
 import org.mapsforge.map.reader.MapDatabase;
-import org.mapsforge.map.reader.MapDatabaseCallback;
+import org.mapsforge.map.reader.MapReadResult;
+import org.mapsforge.map.reader.PointOfInterest;
+import org.mapsforge.map.reader.Way;
 import org.mapsforge.map.reader.header.MapFileInfo;
 import org.xml.sax.SAXException;
 
@@ -45,10 +47,10 @@ import android.graphics.Paint;
 /**
  * A DatabaseRenderer renders map tiles by reading from a {@link MapDatabase}.
  */
-public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDatabaseCallback {
+public class DatabaseRenderer implements MapGenerator, RenderCallback {
 	private static final Byte DEFAULT_START_ZOOM_LEVEL = Byte.valueOf((byte) 12);
 	private static final byte LAYERS = 11;
-	private static final Logger LOG = Logger.getLogger(DatabaseRenderer.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(DatabaseRenderer.class.getName());
 	private static final Paint PAINT_WATER_TILE_HIGHTLIGHT = new Paint(Paint.ANTI_ALIAS_FLAG);
 	private static final double STROKE_INCREASE = 1.5;
 	private static final byte STROKE_MIN_ZOOM_LEVEL = 12;
@@ -63,18 +65,18 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 			inputStream = jobTheme.getRenderThemeAsStream();
 			return RenderThemeHandler.getRenderTheme(inputStream);
 		} catch (ParserConfigurationException e) {
-			LOG.log(Level.SEVERE, null, e);
+			LOGGER.log(Level.SEVERE, null, e);
 		} catch (SAXException e) {
-			LOG.log(Level.SEVERE, null, e);
+			LOGGER.log(Level.SEVERE, null, e);
 		} catch (IOException e) {
-			LOG.log(Level.SEVERE, null, e);
+			LOGGER.log(Level.SEVERE, null, e);
 		} finally {
 			try {
 				if (inputStream != null) {
 					inputStream.close();
 				}
 			} catch (IOException e) {
-				LOG.log(Level.SEVERE, null, e);
+				LOGGER.log(Level.SEVERE, null, e);
 			}
 		}
 		return null;
@@ -166,7 +168,8 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 		}
 
 		if (this.mapDatabase != null) {
-			this.mapDatabase.executeQuery(this.currentTile, this);
+			MapReadResult mapReadResult = this.mapDatabase.readMapData(this.currentTile);
+			processReadMapData(mapReadResult);
 		}
 
 		this.nodes = this.labelPlacement.placeLabels(this.nodes, this.pointSymbols, this.areaLabels, this.currentTile);
@@ -243,14 +246,6 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 	}
 
 	@Override
-	public void renderPointOfInterest(byte layer, int latitude, int longitude, List<Tag> tags) {
-		this.drawingLayer = this.ways.get(getValidLayer(layer));
-		this.poiX = scaleLongitude(longitude);
-		this.poiY = scaleLatitude(latitude);
-		this.renderTheme.matchNode(this, tags, this.currentTile.zoomLevel);
-	}
-
-	@Override
 	public void renderPointOfInterestCaption(String caption, float verticalOffset, Paint paint, Paint stroke) {
 		this.nodes.add(new PointTextContainer(caption, this.poiX, this.poiY + verticalOffset, paint, stroke));
 	}
@@ -265,35 +260,6 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 	public void renderPointOfInterestSymbol(Bitmap symbol) {
 		this.pointSymbols.add(new SymbolContainer(symbol, this.poiX - (symbol.getWidth() >> 1), this.poiY
 				- (symbol.getHeight() >> 1)));
-	}
-
-	@Override
-	public void renderWaterBackground() {
-		this.tagList.clear();
-		this.tagList.add(TAG_NATURAL_WATER);
-		this.coordinates = WATER_TILE_COORDINATES;
-		this.renderTheme.matchClosedWay(this, this.tagList, this.currentTile.zoomLevel);
-	}
-
-	@Override
-	public void renderWay(byte layer, float[] labelPosition, List<Tag> tags, float[][] wayNodes) {
-		this.drawingLayer = this.ways.get(getValidLayer(layer));
-		// TODO what about the label position?
-
-		this.coordinates = wayNodes;
-		for (int i = 0; i < this.coordinates.length; ++i) {
-			for (int j = 0; j < this.coordinates[i].length; j += 2) {
-				this.coordinates[i][j] = scaleLongitude(this.coordinates[i][j]);
-				this.coordinates[i][j + 1] = scaleLatitude(this.coordinates[i][j + 1]);
-			}
-		}
-		this.shapeContainer = new WayContainer(this.coordinates);
-
-		if (GeometryUtils.isClosedWay(this.coordinates[0])) {
-			this.renderTheme.matchClosedWay(this, tags, this.currentTile.zoomLevel);
-		} else {
-			this.renderTheme.matchLinearWay(this, tags, this.currentTile.zoomLevel);
-		}
 	}
 
 	@Override
@@ -349,6 +315,58 @@ public class DatabaseRenderer implements MapGenerator, RenderCallback, MapDataba
 				innerWayList.add(new ArrayList<ShapePaintContainer>(0));
 			}
 			this.ways.add(innerWayList);
+		}
+	}
+
+	private void processReadMapData(MapReadResult mapReadResult) {
+		if (mapReadResult == null) {
+			return;
+		}
+
+		for (PointOfInterest pointOfInterest : mapReadResult.pointOfInterests) {
+			renderPointOfInterest(pointOfInterest);
+		}
+
+		for (Way way : mapReadResult.ways) {
+			renderWay(way);
+		}
+
+		if (mapReadResult.isWater) {
+			renderWaterBackground();
+		}
+	}
+
+	private void renderPointOfInterest(PointOfInterest pointOfInterest) {
+		this.drawingLayer = this.ways.get(getValidLayer(pointOfInterest.layer));
+		this.poiX = scaleLongitude(pointOfInterest.position.longitudeE6);
+		this.poiY = scaleLatitude(pointOfInterest.position.latitudeE6);
+		this.renderTheme.matchNode(this, pointOfInterest.tags, this.currentTile.zoomLevel);
+	}
+
+	private void renderWaterBackground() {
+		this.tagList.clear();
+		this.tagList.add(TAG_NATURAL_WATER);
+		this.coordinates = WATER_TILE_COORDINATES;
+		this.renderTheme.matchClosedWay(this, this.tagList, this.currentTile.zoomLevel);
+	}
+
+	private void renderWay(Way way) {
+		this.drawingLayer = this.ways.get(getValidLayer(way.layer));
+		// TODO what about the label position?
+
+		this.coordinates = way.wayNodes;
+		for (int i = 0; i < this.coordinates.length; ++i) {
+			for (int j = 0; j < this.coordinates[i].length; j += 2) {
+				this.coordinates[i][j] = scaleLongitude(this.coordinates[i][j]);
+				this.coordinates[i][j + 1] = scaleLatitude(this.coordinates[i][j + 1]);
+			}
+		}
+		this.shapeContainer = new WayContainer(this.coordinates);
+
+		if (GeometryUtils.isClosedWay(this.coordinates[0])) {
+			this.renderTheme.matchClosedWay(this, way.tags, this.currentTile.zoomLevel);
+		} else {
+			this.renderTheme.matchLinearWay(this, way.tags, this.currentTile.zoomLevel);
 		}
 	}
 
