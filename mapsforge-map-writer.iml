@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/mapsforge-map-writer/target/classes" />
+    <output-test url="file://$MODULE_DIR$/mapsforge-map-writer/target/test-classes" />
+    <content url="file://$MODULE_DIR$/mapsforge-map-writer">
+      <sourceFolder url="file://$MODULE_DIR$/mapsforge-map-writer/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/mapsforge-map-writer/src/main/config" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/mapsforge-map-writer/src/main/resources" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/mapsforge-map-writer/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/mapsforge-map-writer/src/test/resources" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/mapsforge-map-writer/target/generated-sources/test-annotations" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/mapsforge-map-writer/target/generated-sources/annotations" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/mapsforge-map-writer/target/antrun" />
+      <excludeFolder url="file://$MODULE_DIR$/mapsforge-map-writer/target/archive-tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/mapsforge-map-writer/target/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/mapsforge-map-writer/target/maven-archiver" />
+      <excludeFolder url="file://$MODULE_DIR$/mapsforge-map-writer/target/surefire" />
+      <excludeFolder url="file://$MODULE_DIR$/mapsforge-map-writer/target/surefire-reports" />
+      <excludeFolder url="file://$MODULE_DIR$/mapsforge-map-writer/target/test-classes" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: net.sf.trove4j:trove4j:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: com.vividsolutions:jts:1.12" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:11.0.2" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:1.3.9" level="project" />
+    <orderEntry type="library" name="Maven: osmosis:osmosis-core:0.40.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.10" level="project" />
+  </component>
+</module>
+

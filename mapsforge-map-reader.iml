@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/mapsforge-map-reader/target/classes" />
+    <output-test url="file://$MODULE_DIR$/mapsforge-map-reader/target/test-classes" />
+    <content url="file://$MODULE_DIR$/mapsforge-map-reader">
+      <sourceFolder url="file://$MODULE_DIR$/mapsforge-map-reader/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/mapsforge-map-reader/src/main/resources" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/mapsforge-map-reader/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/mapsforge-map-reader/src/test/resources" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/mapsforge-map-reader/target/generated-sources/test-annotations" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/mapsforge-map-reader/target/generated-sources/annotations" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/mapsforge-map-reader/target/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/mapsforge-map-reader/target/maven-archiver" />
+      <excludeFolder url="file://$MODULE_DIR$/mapsforge-map-reader/target/surefire" />
+      <excludeFolder url="file://$MODULE_DIR$/mapsforge-map-reader/target/surefire-reports" />
+      <excludeFolder url="file://$MODULE_DIR$/mapsforge-map-reader/target/test-classes" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.10" level="project" />
+  </component>
+</module>
+
