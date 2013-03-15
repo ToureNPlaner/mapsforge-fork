@@ -163,12 +163,15 @@ public class FrameBuffer {
 	}
 
 	synchronized void destroy() {
+		this.mapViewCanvas.setBitmap(null);
 		if (this.mapViewBitmap1 != null) {
 			this.mapViewBitmap1.recycle();
+			this.mapViewBitmap1 = null;
 		}
 
 		if (this.mapViewBitmap2 != null) {
 			this.mapViewBitmap2.recycle();
+			this.mapViewBitmap2 = null;
 		}
 	}
 
