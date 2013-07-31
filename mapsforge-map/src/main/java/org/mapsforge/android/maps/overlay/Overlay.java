@@ -289,10 +289,12 @@ public abstract class Overlay extends Thread {
 		// free the overlay bitmaps memory
 		if (this.overlayBitmap1 != null) {
 			this.overlayBitmap1.recycle();
+			this.overlayBitmap1 = null;
 		}
 
 		if (this.overlayBitmap2 != null) {
 			this.overlayBitmap2.recycle();
+			this.overlayBitmap2 = null;
 		}
 	}
 
@@ -430,25 +432,29 @@ public abstract class Overlay extends Thread {
 	final void changeSize() {
 		this.changedSize = false;
 
-		// check if the previous overlay bitmaps must be recycled
-		if (this.overlayBitmap1 != null) {
-			this.overlayBitmap1.recycle();
-		}
-		if (this.overlayBitmap2 != null) {
-			this.overlayBitmap2.recycle();
-		}
+		synchronized (this.matrix) {
+			// check if the previous overlay bitmaps must be recycled
+			if (this.overlayBitmap1 != null) {
+				this.overlayBitmap1.recycle();
+				this.overlayBitmap1 = null;
+			}
+			if (this.overlayBitmap2 != null) {
+				this.overlayBitmap2.recycle();
+				this.overlayBitmap2 = null;
+			}
 
-		// check if the new dimensions are positive
-		if (this.internalMapView.getDrawingWidth() > 0 && this.internalMapView.getDrawingHeight() > 0) {
-			// create the two overlay bitmaps with the correct dimensions
-			this.overlayBitmap1 = Bitmap.createBitmap(this.internalMapView.getDrawingWidth(),
-					this.internalMapView.getDrawingHeight(), Bitmap.Config.ARGB_8888);
-			this.overlayBitmap2 = Bitmap.createBitmap(this.internalMapView.getDrawingWidth(),
-					this.internalMapView.getDrawingHeight(), Bitmap.Config.ARGB_8888);
-			this.redraw = true;
-			this.hasValidDimensions = true;
-		} else {
-			this.hasValidDimensions = false;
+			// check if the new dimensions are positive
+			if (this.internalMapView.getDrawingWidth() > 0 && this.internalMapView.getDrawingHeight() > 0) {
+				// create the two overlay bitmaps with the correct dimensions
+				this.overlayBitmap1 = Bitmap.createBitmap(this.internalMapView.getDrawingWidth(),
+						this.internalMapView.getDrawingHeight(), Bitmap.Config.ARGB_8888);
+				this.overlayBitmap2 = Bitmap.createBitmap(this.internalMapView.getDrawingWidth(),
+						this.internalMapView.getDrawingHeight(), Bitmap.Config.ARGB_8888);
+				this.redraw = true;
+				this.hasValidDimensions = true;
+			} else {
+				this.hasValidDimensions = false;
+			}
 		}
 	}
 
